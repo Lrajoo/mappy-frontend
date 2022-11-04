@@ -4,6 +4,7 @@ import MapView from "../pages/MapView/MapView";
 import ListView from "../pages/ListView/ListView";
 import SearchLocation from "../pages/SearchLocation/SearchLocation";
 import "./App.css";
+import "antd/dist/antd.css";
 
 function App() {
   return (
