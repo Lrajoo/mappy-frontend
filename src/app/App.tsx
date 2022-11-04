@@ -1,8 +1,8 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import MapView from "../pages/MapView/MapView";
-import ListView from "../pages/ListView/ListView";
-import SearchLocation from "../pages/SearchLocation/SearchLocation";
+import MapPage from "../pages/MapPage/MapPage";
+import ListPage from "../pages/ListPage/ListPage";
+import SearchPage from "../pages/SearchPage/SearchPage";
 import "./App.css";
 import "antd/dist/antd.css";
 
@@ -10,9 +10,9 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<MapView />} />
-        <Route path="/list" element={<ListView />} />
-        <Route path="/search" element={<SearchLocation />} />
+        <Route path="/" element={<MapPage />} />
+        <Route path="/list" element={<ListPage />} />
+        <Route path="/search" element={<SearchPage />} />
       </Routes>
     </BrowserRouter>
   );
