@@ -14,7 +14,7 @@ const Sidebar = (props: SidebarProps) => {
 
   return (
     <Sider
-      style={{ position: "absolute", height: "100vh", zIndex: 2, backgroundColor: "#282828" }}
+      style={{ position: "absolute", height: "100vh", zIndex: 2, backgroundColor: "#282828E1" }}
       trigger={null}
       collapsible
       collapsed={props.collapsed}
@@ -23,20 +23,26 @@ const Sidebar = (props: SidebarProps) => {
       <Row>
         <Col span={24}>
           <Row justify="end">
-            <CloseOutlined onClick={() => props.toggleSidebarView(true)} style={{ color: "#FFFFFF" }} />
+            <CloseOutlined
+              onClick={() => props.toggleSidebarView(true)}
+              style={{ color: "#FFFFFF", fontSize: "18px", marginTop: "15px", marginRight: "15px" }}
+            />
           </Row>
-          <Row justify="space-around">
-            <Button type="primary" onClick={() => navigate("/list")}>
+          <Row style={{ margin: "20px" }} justify="space-around">
+            <h2 style={{ color: "#FFFFFF" }}>Mappy</h2>
+          </Row>
+          <Row style={{ marginBottom: "10px" }} justify="space-around">
+            <Button style={{ color: "#FFFFFF" }} type="link" onClick={() => navigate("/list")}>
               My List
             </Button>
           </Row>
-          <Row justify="space-around">
-            <Button type="primary" onClick={() => navigate("/")}>
+          <Row style={{ marginBottom: "10px" }} justify="space-around">
+            <Button style={{ color: "#FFFFFF" }} type="link" onClick={() => navigate("/")}>
               Map
             </Button>
           </Row>
-          <Row justify="space-around">
-            <Button type="primary" onClick={() => navigate("/search")}>
+          <Row style={{ marginBottom: "10px" }} justify="space-around">
+            <Button style={{ color: "#FFFFFF" }} type="link" onClick={() => navigate("/search")}>
               Search
             </Button>
           </Row>
