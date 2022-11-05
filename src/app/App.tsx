@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+
 import MapPage from "../pages/MapPage/MapPage";
 import ListPage from "../pages/ListPage/ListPage";
 import SearchPage from "../pages/SearchPage/SearchPage";
