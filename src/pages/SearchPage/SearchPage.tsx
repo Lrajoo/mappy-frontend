@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Col, Row, Layout } from "antd";
 import { MenuOutlined } from "@ant-design/icons";
+import Header from "../../components/Header/Header";
 import Sidebar from "../../components/Sider/Sidebar";
 import "./SearchPage.css";
 
@@ -16,18 +17,7 @@ const SearchPage = () => {
     <Layout>
       <Sidebar collapsed={sidebarCollapsed} toggleSidebarView={toggleSidebarView} />
       <Content>
-        <Row>
-          <Col span={24}>
-            <Row justify="start">
-              <MenuOutlined onClick={() => toggleSidebarView(false)} />
-            </Row>
-            <Row>
-              <Col>
-                <h1>Search View</h1>
-              </Col>
-            </Row>
-          </Col>
-        </Row>
+        <Header toggleSidebarView={toggleSidebarView} />
       </Content>
     </Layout>
   );
