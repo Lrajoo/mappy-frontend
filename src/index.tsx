@@ -8,11 +8,12 @@ import reportWebVitals from "./reportWebVitals";
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 const key = process.env.REACT_APP_GOOGLE_MAPS_API_KEY || "";
 root.render(
-  <LoadScript googleMapsApiKey={key}>
-    <App />
-  </LoadScript>
+  <React.StrictMode>
+    <LoadScript googleMapsApiKey={key}>
+      <App />
+    </LoadScript>
+  </React.StrictMode>
 );
-//   <React.StrictMode>
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

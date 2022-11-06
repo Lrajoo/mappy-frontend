@@ -1,6 +1,5 @@
 import React from "react";
-import { Col, Row, Card } from "antd";
-import { MenuOutlined } from "@ant-design/icons";
+import { Card } from "antd";
 
 export interface ResultCardProps {
   name: string;

@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { Col, Row, Layout, Input, Space } from "antd";
+import { getSearchResults } from "./SearchPageService";
 import Header from "../../components/Header/Header";
 import Sidebar from "../../components/Sider/Sidebar";
 import ResultCard from "../../components/ResultCard/ResultCard";
+import LocationCard from "../../components/LocationCard/LocationCard";
 import "./SearchPage.css";
 
 const { Content } = Layout;
@@ -10,76 +12,33 @@ const { Search } = Input;
 
 const SearchPage = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
+  const [results, setResults] = useState([]);
+  const [locationDetails, setLocationDetails] = useState({});
+  const [open, setOpen] = useState(false);
 
   const toggleSidebarView = (collapsed: boolean) => {
     setSidebarCollapsed(collapsed);
   };
 
-  const results = [
-    {
-      key: "1",
-      name: "Devocion",
-      categories: ["Coffee", "Cafe"],
-      cuisine: "Colombian",
-      address: "25 E 20th St, New York, NY 10003",
-    },
-    {
-      key: "2",
-      name: "Hangawi",
-      categories: ["Restaurant"],
-      cuisine: "Korean",
-      address: "12 E 32nd St, New York, NY 10016",
-    },
-    {
-      key: "3",
-      name: "Dead Rabbit",
-      categories: ["Bar"],
-      cuisine: "Pub",
-      address: "30 Water St, New York, NY 10004",
-    },
-    {
-      key: "4",
-      name: "Chai Spot",
-      categories: ["Coffee", "Cafe"],
-      cuisine: "Indian",
-      address: "156 Mott St, New York, NY 10013",
-    },
-    {
-      key: "5",
-      name: "Kopitiam",
-      categories: ["Restaurant", "Cafe"],
-      cuisine: "Malaysian",
-      address: "151 E Broadway, New York, NY 10002",
-    },
-    {
-      key: "6",
-      name: "Leo's Bagels",
-      categories: ["Cafe"],
-      cuisine: "Jewish",
-      address: "3 Hanover Square, New York, NY 10004",
-    },
-    {
-      key: "7",
-      name: "La Parisienne",
-      categories: ["Cafe"],
-      cuisine: "French",
-      address: "9 Maiden Ln, New York, NY 10038",
-    },
-    {
-      key: "8",
-      name: "Laut",
-      categories: ["Restaurant"],
-      cuisine: "Singaporean",
-      address: "31 E 20th St, New York, NY 10003",
-    },
-    {
-      key: "9",
-      name: "Salma",
-      categories: ["Restaurant"],
-      cuisine: "Lebanese",
-      address: "351 E 12th St, New York, NY 10003",
-    },
-  ];
+  const searchPlaces = async (searchString: string) => {
+    const searchQuery = searchString.replace(" ", "+") + "New+York";
+    const res = await getSearchResults(searchQuery);
+    setResults(res.data);
+  };
+
+  const showLocationCard = (details: any) => {
+    setOpen(true);
+    setLocationDetails(details);
+  };
+
+  const hideLocationCard = () => {
+    setOpen(false);
+  };
+
+  const addLocation = () => {
+    console.log("add location");
+    setOpen(false);
+  };
 
   return (
     <Layout>
@@ -97,7 +56,9 @@ const SearchPage = () => {
                 allowClear
                 enterButton="Search"
                 size="large"
-                onSearch={() => {}}
+                onSearch={(value: string) => {
+                  searchPlaces(value);
+                }}
                 style={{ width: "80vw", marginBottom: "20px" }}
               />
             </Row>
@@ -106,13 +67,25 @@ const SearchPage = () => {
             </Row>
             {results.map((result: any) => {
               return (
-                <Row justify="space-evenly" key={result.name} style={{ fontSize: "16px", marginBottom: "10px" }}>
+                <Row
+                  justify="space-evenly"
+                  key={result.placeID}
+                  style={{ fontSize: "16px", marginBottom: "10px" }}
+                  onClick={() => showLocationCard(result)}
+                >
                   <ResultCard name={result.name} address={result.address}></ResultCard>
                 </Row>
               );
             })}
           </Col>
         </Row>
+        <LocationCard
+          open={open}
+          hideLocationCard={hideLocationCard}
+          addLocation={addLocation}
+          locationDetails={locationDetails}
+        />
+        ;
       </Content>
     </Layout>
   );
