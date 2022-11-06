@@ -4,6 +4,7 @@ import { GoogleMap, Marker } from "@react-google-maps/api";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import Sidebar from "../../components/Sider/Sidebar";
+import LocationCard from "../../components/LocationCard/LocationCard";
 import "./MapPage.css";
 
 const { Content } = Layout;
@@ -11,10 +12,25 @@ const { Content } = Layout;
 const MapPage = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
   const [places, setPlaces] = useState([]);
+  const [locationDetails, setLocationDetails] = useState({});
+  const [open, setOpen] = useState(false);
   let navigate = useNavigate();
 
   const toggleSidebarView = (collapsed: boolean) => {
     setSidebarCollapsed(collapsed);
+  };
+
+  const showLocationCard = (details: any) => {
+    setOpen(true);
+    setLocationDetails(details);
+  };
+
+  const hideLocationCard = () => {
+    setOpen(false);
+  };
+
+  const addLocation = () => {
+    setOpen(false);
   };
 
   const center = {
@@ -110,7 +126,14 @@ const MapPage = () => {
           />
           {places.length > 0 &&
             places.map((place: any) => {
-              return <Marker key={place.key} icon={place.icon} position={place.position} />;
+              return (
+                <Marker
+                  key={place.key}
+                  icon={place.icon}
+                  position={place.position}
+                  onClick={() => showLocationCard(place)}
+                />
+              );
             })}
         </GoogleMap>
         <Button
@@ -120,6 +143,12 @@ const MapPage = () => {
         >
           Add Location
         </Button>
+        <LocationCard
+          open={open}
+          hideLocationCard={hideLocationCard}
+          addLocation={addLocation}
+          locationDetails={locationDetails}
+        />
       </Content>
     </Layout>
   );

@@ -36,7 +36,6 @@ const SearchPage = () => {
   };
 
   const addLocation = () => {
-    console.log("add location");
     setOpen(false);
   };
 
@@ -85,7 +84,6 @@ const SearchPage = () => {
           addLocation={addLocation}
           locationDetails={locationDetails}
         />
-        ;
       </Content>
     </Layout>
   );

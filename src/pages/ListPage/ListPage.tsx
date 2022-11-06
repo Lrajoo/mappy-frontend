@@ -3,6 +3,7 @@ import { Col, Row, Layout, Table, Button, Tag } from "antd";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import Sidebar from "../../components/Sider/Sidebar";
+import LocationCard from "../../components/LocationCard/LocationCard";
 import "./ListPage.css";
 
 const { Content } = Layout;
@@ -10,10 +11,26 @@ const { Content } = Layout;
 const ListPage = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
 
+  const [locationDetails, setLocationDetails] = useState({});
+  const [open, setOpen] = useState(false);
+
   let navigate = useNavigate();
 
   const toggleSidebarView = (collapsed: boolean) => {
     setSidebarCollapsed(collapsed);
+  };
+
+  const showLocationCard = (details: any) => {
+    setOpen(true);
+    setLocationDetails(details);
+  };
+
+  const hideLocationCard = () => {
+    setOpen(false);
+  };
+
+  const addLocation = () => {
+    setOpen(false);
   };
 
   const columns = [
@@ -128,7 +145,19 @@ const ListPage = () => {
             </Row>
           </Col>
         </Row>
-        <Table columns={columns} dataSource={data} pagination={false} />
+        <Table
+          columns={columns}
+          dataSource={data}
+          pagination={false}
+          onRow={(record: any) => {
+            return {
+              onClick: () => {
+                showLocationCard(record);
+                console.log("clicked row", record);
+              },
+            };
+          }}
+        />
         <Button
           type="primary"
           style={{ position: "fixed", bottom: "4vh", right: "2vh" }}
@@ -136,6 +165,12 @@ const ListPage = () => {
         >
           Add Location
         </Button>
+        <LocationCard
+          open={open}
+          hideLocationCard={hideLocationCard}
+          addLocation={addLocation}
+          locationDetails={locationDetails}
+        />
       </Content>
     </Layout>
   );
