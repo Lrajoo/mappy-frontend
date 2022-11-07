@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Layout, Button } from "antd";
 import { GoogleMap, Marker } from "@react-google-maps/api";
 import { useNavigate } from "react-router-dom";
+import { getPlaceDetails } from "./MapPageService";
 import Header from "../../components/Header/Header";
 import Sidebar from "../../components/Sider/Sidebar";
 import LocationCard from "../../components/LocationCard/LocationCard";
@@ -12,7 +13,7 @@ const { Content } = Layout;
 const MapPage = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
   const [places, setPlaces] = useState([]);
-  const [locationDetails, setLocationDetails] = useState({});
+  const [locationDetails, setLocationDetails] = useState({}) as any;
   const [open, setOpen] = useState(false);
   let navigate = useNavigate();
 
@@ -20,9 +21,10 @@ const MapPage = () => {
     setSidebarCollapsed(collapsed);
   };
 
-  const showLocationCard = (details: any) => {
+  const showLocationCard = async (placeID: string) => {
+    const res = await getPlaceDetails(placeID);
     setOpen(true);
-    setLocationDetails(details);
+    setLocationDetails(res.data);
   };
 
   const hideLocationCard = () => {

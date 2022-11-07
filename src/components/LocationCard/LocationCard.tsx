@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import { Col, Row, Modal, Button } from "antd";
+import { DetailedPlace } from "../../interface/detailedPlace";
 
 export interface LocationCardProps {
   open: boolean;
-  locationDetails: any;
+  locationDetails: DetailedPlace;
   addLocation: () => void;
   hideLocationCard: () => void;
 }
 
 const LocationCard = (props: LocationCardProps) => {
+  const currentDay = new Date().getDay();
   const getIcon = (category: string[]) => {
     if (category && category.includes("bar")) {
       return "https://img.icons8.com/external-vitaliy-gorbachev-flat-vitaly-gorbachev/35/null/external-cocktail-vacation-vitaliy-gorbachev-flat-vitaly-gorbachev-1.png";
@@ -19,7 +21,7 @@ const LocationCard = (props: LocationCardProps) => {
     }
   };
 
-  const title = props != undefined && (
+  const title = props !== undefined && (
     <>
       <h2>
         <img src={getIcon(props.locationDetails.category)} alt="Category Icon" />
@@ -29,18 +31,39 @@ const LocationCard = (props: LocationCardProps) => {
   );
 
   return (
-    <Modal open={props.open} title={title} onCancel={props.hideLocationCard} footer={null}>
+    <Modal
+      open={props.open}
+      title={title}
+      onCancel={props.hideLocationCard}
+      footer={null}
+      style={{ padding: 0 }}
+      bodyStyle={{ padding: "20px" }}
+    >
       <Row>
         <Col span={24}>
-          <Row style={{ marginBottom: "10px" }}>
+          <Row style={{ marginBottom: "10px", fontSize: "18px" }}>
+            Description:<br></br>
+            {props.locationDetails.description}
+          </Row>
+          <Row style={{ marginBottom: "10px", fontSize: "18px" }}>
             Address:<br></br>
             {props.locationDetails.address}
           </Row>
-          <Row style={{ marginBottom: "10px" }}>
+          <Row style={{ marginBottom: "10px", fontSize: "18px" }}>
             Hours:<br></br>
+            {props.locationDetails.openingHours && props.locationDetails.openingHours[currentDay]}
           </Row>
-          <Row style={{ marginBottom: "30px" }}>
-            Contact:<br></br>(XXX) XXX-XXXX
+          <Row style={{ marginBottom: "10px", fontSize: "18px" }}>
+            Contact:<br></br>
+            {props.locationDetails.phoneNumber}
+          </Row>
+          <Row style={{ marginBottom: "30px", fontSize: "18px" }}>
+            {props.locationDetails.location && (
+              <img
+                src={`https://maps.googleapis.com/maps/api/staticmap?center=${props.locationDetails.location.lat},${props.locationDetails.location.lng}&zoom=13&size=325x200&markers=color:red%7C${props.locationDetails.location.lat},${props.locationDetails.location.lng}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`}
+                alt="Pinned Map Location"
+              />
+            )}
           </Row>
           <Row justify="center">
             <Button type="primary" onClick={props.addLocation}>

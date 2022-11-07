@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Col, Row, Layout, Table, Button, Tag } from "antd";
 import { useNavigate } from "react-router-dom";
+import { getPlaceDetails } from "./ListPageService";
 import Header from "../../components/Header/Header";
 import Sidebar from "../../components/Sider/Sidebar";
 import LocationCard from "../../components/LocationCard/LocationCard";
@@ -11,7 +12,7 @@ const { Content } = Layout;
 const ListPage = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
 
-  const [locationDetails, setLocationDetails] = useState({});
+  const [locationDetails, setLocationDetails] = useState({}) as any;
   const [open, setOpen] = useState(false);
 
   let navigate = useNavigate();
@@ -20,9 +21,10 @@ const ListPage = () => {
     setSidebarCollapsed(collapsed);
   };
 
-  const showLocationCard = (details: any) => {
+  const showLocationCard = async (placeID: string) => {
+    const res = await getPlaceDetails(placeID);
     setOpen(true);
-    setLocationDetails(details);
+    setLocationDetails(res.data);
   };
 
   const hideLocationCard = () => {
@@ -150,9 +152,10 @@ const ListPage = () => {
           dataSource={data}
           pagination={false}
           onRow={(record: any) => {
+            console.log(record);
             return {
               onClick: () => {
-                showLocationCard(record);
+                showLocationCard("");
                 console.log("clicked row", record);
               },
             };

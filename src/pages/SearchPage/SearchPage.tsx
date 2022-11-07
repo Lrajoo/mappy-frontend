@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Col, Row, Layout, Input, Space } from "antd";
-import { getSearchResults } from "./SearchPageService";
+import { getSearchResults, getPlaceDetails } from "./SearchPageService";
 import Header from "../../components/Header/Header";
 import Sidebar from "../../components/Sider/Sidebar";
 import ResultCard from "../../components/ResultCard/ResultCard";
@@ -13,7 +13,7 @@ const { Search } = Input;
 const SearchPage = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
   const [results, setResults] = useState([]);
-  const [locationDetails, setLocationDetails] = useState({});
+  const [locationDetails, setLocationDetails] = useState({}) as any;
   const [open, setOpen] = useState(false);
 
   const toggleSidebarView = (collapsed: boolean) => {
@@ -26,9 +26,10 @@ const SearchPage = () => {
     setResults(res.data);
   };
 
-  const showLocationCard = (details: any) => {
+  const showLocationCard = async (placeID: string) => {
+    const res = await getPlaceDetails(placeID);
     setOpen(true);
-    setLocationDetails(details);
+    setLocationDetails(res.data);
   };
 
   const hideLocationCard = () => {
@@ -70,7 +71,7 @@ const SearchPage = () => {
                   justify="space-evenly"
                   key={result.placeID}
                   style={{ fontSize: "16px", marginBottom: "10px" }}
-                  onClick={() => showLocationCard(result)}
+                  onClick={() => showLocationCard(result.placeID)}
                 >
                   <ResultCard name={result.name} address={result.address}></ResultCard>
                 </Row>
