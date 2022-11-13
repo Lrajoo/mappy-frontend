@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
 import { Col, Row, Layout, Input, Space } from "antd";
-import { getSearchResults, getPlaceDetails } from "./SearchPageService";
+import { getSearchResults, getPlaceDetails, postLocation } from "./SearchPageService";
 import Header from "../../components/Header/Header";
 import Sidebar from "../../components/Sider/Sidebar";
 import ResultCard from "../../components/ResultCard/ResultCard";
@@ -15,13 +16,15 @@ const SearchPage = () => {
   const [results, setResults] = useState([]);
   const [locationDetails, setLocationDetails] = useState({}) as any;
   const [open, setOpen] = useState(false);
+  const [disableLocation, setDisableLocation] = useState(false);
+  const { state } = useLocation();
 
   const toggleSidebarView = (collapsed: boolean) => {
     setSidebarCollapsed(collapsed);
   };
 
   const searchPlaces = async (searchString: string) => {
-    const searchQuery = searchString.replace(" ", "+") + "New+York";
+    const searchQuery = searchString.replace(" ", "+") + "+New+York+City";
     const res = await getSearchResults(searchQuery);
     setResults(res.data);
   };
@@ -30,13 +33,23 @@ const SearchPage = () => {
     const res = await getPlaceDetails(placeID);
     setOpen(true);
     setLocationDetails(res.data);
+    setDisableLocation(state.placeIds.includes(placeID));
   };
 
   const hideLocationCard = () => {
+    setDisableLocation(false);
     setOpen(false);
   };
 
-  const addLocation = () => {
+  const addLocation = async () => {
+    const payload = {
+      userId: "f2cada03-140f-41ad-84eb-1ee7560ad516",
+      placeId: locationDetails.placeId,
+      mustHave: "",
+      notes: "",
+    };
+    const res = await postLocation(payload);
+    setDisableLocation(false);
     setOpen(false);
   };
 
@@ -81,6 +94,7 @@ const SearchPage = () => {
         </Row>
         <LocationCard
           open={open}
+          disableLocation={disableLocation}
           hideLocationCard={hideLocationCard}
           addLocation={addLocation}
           locationDetails={locationDetails}

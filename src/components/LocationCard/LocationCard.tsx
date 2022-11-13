@@ -4,8 +4,10 @@ import { DetailedPlace } from "../../interface/detailedPlace";
 
 export interface LocationCardProps {
   open: boolean;
+  disableLocation: boolean;
   locationDetails: DetailedPlace;
   addLocation: () => void;
+  removeLocation?: () => void;
   hideLocationCard: () => void;
 }
 
@@ -66,9 +68,15 @@ const LocationCard = (props: LocationCardProps) => {
             )}
           </Row>
           <Row justify="center">
-            <Button type="primary" onClick={props.addLocation}>
-              Add Location
-            </Button>
+            {props.disableLocation ? (
+              <Button type="primary" danger onClick={props.removeLocation}>
+                Delete Location
+              </Button>
+            ) : (
+              <Button type="primary" onClick={props.addLocation}>
+                Add Location
+              </Button>
+            )}
           </Row>
         </Col>
       </Row>

@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Layout, Button } from "antd";
 import { GoogleMap, Marker } from "@react-google-maps/api";
 import { useNavigate } from "react-router-dom";
-import { getPlaceDetails } from "./MapPageService";
+import { getLocations, getPlaceDetails, deleteLocation } from "./MapPageService";
 import Header from "../../components/Header/Header";
 import Sidebar from "../../components/Sider/Sidebar";
 import LocationCard from "../../components/LocationCard/LocationCard";
+import { getCategory } from "../../utils/category";
 import "./MapPage.css";
 
 const { Content } = Layout;
@@ -13,16 +14,21 @@ const { Content } = Layout;
 const MapPage = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
   const [places, setPlaces] = useState([]);
+  const [placeIds, setPlaceIds] = useState([]);
   const [locationDetails, setLocationDetails] = useState({}) as any;
   const [open, setOpen] = useState(false);
   let navigate = useNavigate();
+
+  useEffect(() => {
+    populateMap();
+  }, []);
 
   const toggleSidebarView = (collapsed: boolean) => {
     setSidebarCollapsed(collapsed);
   };
 
-  const showLocationCard = async (placeID: string) => {
-    const res = await getPlaceDetails(placeID);
+  const showLocationCard = async (placeId: string) => {
+    const res = await getPlaceDetails(placeId);
     setOpen(true);
     setLocationDetails(res.data);
   };
@@ -31,8 +37,27 @@ const MapPage = () => {
     setOpen(false);
   };
 
+  const populateMap = async () => {
+    const res = await getLocations();
+    let loadedPlaces: any = [];
+    let loadedPlaceIds: any = [];
+    await res.data.map(async (place: any) => {
+      const locationDetail = await getPlaceDetails(place.placeId);
+      loadedPlaces = [...loadedPlaces, locationDetail.data];
+      loadedPlaceIds = [...loadedPlaceIds, place.placeId];
+      setPlaces(loadedPlaces);
+      setPlaceIds(loadedPlaceIds);
+    });
+  };
+
   const addLocation = () => {
     setOpen(false);
+  };
+
+  const removeLocation = async () => {
+    const res = await deleteLocation(locationDetails.placeId);
+    setOpen(false);
+    populateMap();
   };
 
   const center = {
@@ -60,67 +85,6 @@ const MapPage = () => {
             streetViewControl: false,
             zoomControlOptions: { position: 6.0 },
           }}
-          onLoad={() => {
-            const placesLoaded: any = [
-              {
-                key: "1",
-                position: {
-                  lat: 40.739111,
-                  lng: -73.989113,
-                },
-                icon: "https://img.icons8.com/fluency/35/null/coffee-to-go.png",
-              },
-              {
-                key: "2",
-                position: {
-                  lat: 40.7160576,
-                  lng: -73.9646899,
-                },
-                icon: "https://img.icons8.com/fluency/35/null/coffee-to-go.png",
-              },
-              {
-                key: "3",
-                position: {
-                  lat: 40.6885567,
-                  lng: -73.98345909999999,
-                },
-                icon: "https://img.icons8.com/fluency/35/null/coffee-to-go.png",
-              },
-              {
-                key: "4",
-                position: {
-                  lat: 40.7138484,
-                  lng: -73.9909298,
-                },
-                icon: "https://img.icons8.com/external-bearicons-blue-bearicons/35/null/external-Restaurant-location-bearicons-blue-bearicons.png",
-              },
-              {
-                key: "5",
-                position: {
-                  lat: 40.7049369,
-                  lng: -74.00973429999999,
-                },
-                icon: "https://img.icons8.com/external-bearicons-blue-bearicons/35/null/external-Restaurant-location-bearicons-blue-bearicons.png",
-              },
-              {
-                key: "6",
-                position: {
-                  lat: 40.7032685,
-                  lng: -74.01102179999999,
-                },
-                icon: "https://img.icons8.com/external-vitaliy-gorbachev-flat-vitaly-gorbachev/35/null/external-cocktail-vacation-vitaliy-gorbachev-flat-vitaly-gorbachev-1.png",
-              },
-              {
-                key: "7",
-                position: {
-                  lat: 40.7421711,
-                  lng: -74.00352199999999,
-                },
-                icon: "https://img.icons8.com/external-vitaliy-gorbachev-flat-vitaly-gorbachev/35/null/external-cocktail-vacation-vitaliy-gorbachev-flat-vitaly-gorbachev-1.png",
-              },
-            ];
-            setPlaces(placesLoaded);
-          }}
         >
           <Marker
             position={currentLocation}
@@ -130,10 +94,10 @@ const MapPage = () => {
             places.map((place: any) => {
               return (
                 <Marker
-                  key={place.key}
-                  icon={place.icon}
-                  position={place.position}
-                  onClick={() => showLocationCard(place)}
+                  key={place.placeId}
+                  icon={getCategory(place.category)}
+                  position={place.location}
+                  onClick={() => showLocationCard(place.placeId)}
                 />
               );
             })}
@@ -141,14 +105,22 @@ const MapPage = () => {
         <Button
           type="primary"
           style={{ position: "absolute", bottom: "4vh", right: "2vh" }}
-          onClick={() => navigate("/search")}
+          onClick={() =>
+            navigate("/search", {
+              state: {
+                placeIds: placeIds,
+              },
+            })
+          }
         >
           Add Location
         </Button>
         <LocationCard
           open={open}
+          disableLocation={true}
           hideLocationCard={hideLocationCard}
           addLocation={addLocation}
+          removeLocation={removeLocation}
           locationDetails={locationDetails}
         />
       </Content>

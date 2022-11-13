@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Col, Row, Layout, Table, Button, Tag } from "antd";
 import { useNavigate } from "react-router-dom";
-import { getPlaceDetails } from "./ListPageService";
+import { getPlaceDetails, getLocations, deleteLocation } from "./ListPageService";
 import Header from "../../components/Header/Header";
 import Sidebar from "../../components/Sider/Sidebar";
 import LocationCard from "../../components/LocationCard/LocationCard";
@@ -11,11 +11,29 @@ const { Content } = Layout;
 
 const ListPage = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
-
   const [locationDetails, setLocationDetails] = useState({}) as any;
+  const [places, setPlaces] = useState([]);
+  const [placeIds, setPlaceIds] = useState([]);
   const [open, setOpen] = useState(false);
-
   let navigate = useNavigate();
+
+  useEffect(() => {
+    populateList();
+  }, []);
+
+  const populateList = async () => {
+    const res = await getLocations();
+    let loadedPlaces: any = [];
+    let loadedPlaceIds: any = [];
+    await res.data.map(async (place: any) => {
+      const locationDetail = await getPlaceDetails(place.placeId);
+      locationDetail.data["key"] = place.placeId;
+      loadedPlaces = [...loadedPlaces, locationDetail.data];
+      loadedPlaceIds = [...loadedPlaceIds, place.placeId];
+      setPlaces(loadedPlaces);
+      setPlaceIds(loadedPlaceIds);
+    });
+  };
 
   const toggleSidebarView = (collapsed: boolean) => {
     setSidebarCollapsed(collapsed);
@@ -35,27 +53,32 @@ const ListPage = () => {
     setOpen(false);
   };
 
+  const removeLocation = async () => {
+    const res = await deleteLocation(locationDetails.placeId);
+    setOpen(false);
+    populateList();
+  };
+
   const columns = [
     {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      render: (text: any) => <a>{text}</a>,
     },
     {
       title: "Category",
-      key: "categories",
-      dataIndex: "categories",
-      render: (_: any, { categories }: any) => (
+      key: "category",
+      dataIndex: "category",
+      render: (_: any, { category }: any) => (
         <>
-          {categories.map((category: any) => {
+          {category.map((category: any) => {
             let color = "blue";
-            if (category === "Coffee") {
+            if (category === "coffee") {
               color = "brown";
-            } else if (category === "Bar") {
-              color = "volcano";
-            } else if (category === "Cafe") {
-              color = "green";
+            } else if (category === "bar") {
+              color = "blue";
+            } else if (category === "restaurant") {
+              color = "red";
             }
             return (
               <Tag color={color} key={category}>
@@ -67,66 +90,9 @@ const ListPage = () => {
       ),
     },
     {
-      title: "Cuisine",
-      dataIndex: "cuisine",
-      key: "cuisine",
-    },
-  ];
-
-  const data = [
-    {
-      key: "1",
-      name: "Devocion",
-      categories: ["Coffee", "Cafe"],
-      cuisine: "Colombian",
-    },
-    {
-      key: "2",
-      name: "Hangawi",
-      categories: ["Restaurant"],
-      cuisine: "Korean",
-    },
-    {
-      key: "3",
-      name: "Dead Rabbit",
-      categories: ["Bar"],
-      cuisine: "Pub",
-    },
-    {
-      key: "4",
-      name: "Chai Spot",
-      categories: ["Coffee", "Cafe"],
-      cuisine: "Indian",
-    },
-    {
-      key: "5",
-      name: "Kopitiam",
-      categories: ["Restaurant", "Cafe"],
-      cuisine: "Malaysian",
-    },
-    {
-      key: "6",
-      name: "Leo's Bagels",
-      categories: ["Cafe"],
-      cuisine: "Jewish",
-    },
-    {
-      key: "7",
-      name: "La Parisienne",
-      categories: ["Cafe"],
-      cuisine: "French",
-    },
-    {
-      key: "8",
-      name: "Laut",
-      categories: ["Restaurant"],
-      cuisine: "Singaporean",
-    },
-    {
-      key: "9",
-      name: "Salma",
-      categories: ["Restaurant"],
-      cuisine: "Lebanese",
+      title: "Rating",
+      dataIndex: "rating",
+      key: "rating",
     },
   ];
 
@@ -149,14 +115,12 @@ const ListPage = () => {
         </Row>
         <Table
           columns={columns}
-          dataSource={data}
+          dataSource={places}
           pagination={false}
           onRow={(record: any) => {
-            console.log(record);
             return {
               onClick: () => {
-                showLocationCard("");
-                console.log("clicked row", record);
+                showLocationCard(record.placeId);
               },
             };
           }}
@@ -164,14 +128,22 @@ const ListPage = () => {
         <Button
           type="primary"
           style={{ position: "fixed", bottom: "4vh", right: "2vh" }}
-          onClick={() => navigate("/search")}
+          onClick={() => {
+            navigate("/search", {
+              state: {
+                placeIds: placeIds,
+              },
+            });
+          }}
         >
           Add Location
         </Button>
         <LocationCard
           open={open}
+          disableLocation={true}
           hideLocationCard={hideLocationCard}
           addLocation={addLocation}
+          removeLocation={removeLocation}
           locationDetails={locationDetails}
         />
       </Content>
