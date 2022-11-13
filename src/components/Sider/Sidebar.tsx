@@ -29,7 +29,9 @@ const Sidebar = (props: SidebarProps) => {
             />
           </Row>
           <Row style={{ margin: "20px" }} justify="space-around">
-            <h2 style={{ color: "#FFFFFF" }}>Mappy</h2>
+            <h2 style={{ color: "#FFFFFF" }}>
+              <img src="https://img.icons8.com/color/35/null/map-pin.png" alt="Mappy logo" /> Mappy
+            </h2>
           </Row>
           <Row style={{ marginBottom: "10px" }} justify="space-around">
             <Button style={{ color: "#FFFFFF" }} type="link" onClick={() => navigate("/list")}>
