@@ -27,12 +27,16 @@ const ListPage = () => {
     let loadedPlaces: any = [];
     let loadedPlaceIds: any = [];
     await res.data.map(async (place: any) => {
-      const locationDetail = await getPlaceDetails(place.placeId);
-      locationDetail.data["key"] = place.placeId;
-      loadedPlaces = [...loadedPlaces, locationDetail.data];
-      loadedPlaceIds = [...loadedPlaceIds, place.placeId];
-      setPlaces(loadedPlaces);
-      setPlaceIds(loadedPlaceIds);
+      try {
+        const locationDetail = await getPlaceDetails(place.placeId);
+        locationDetail.data["key"] = place.placeId;
+        loadedPlaces = [...loadedPlaces, locationDetail.data];
+        loadedPlaceIds = [...loadedPlaceIds, place.placeId];
+        setPlaces(loadedPlaces);
+        setPlaceIds(loadedPlaceIds);
+      } catch (e) {
+        console.log("populateList error", e);
+      }
     });
   };
 
@@ -58,11 +62,15 @@ const ListPage = () => {
 
   const removeLocation = async () => {
     setLoading(true);
-    const res = await deleteLocation(locationDetails.placeId);
-    populateList();
-    setLoading(false);
-    setOpen(false);
-    setTimeout(() => message.error(`Removed ${locationDetails.name}!`), 1000);
+    try {
+      const res = await deleteLocation(locationDetails.placeId);
+      populateList();
+      setLoading(false);
+      setOpen(false);
+      setTimeout(() => message.error(`Removed ${locationDetails.name}!`), 1000);
+    } catch (e) {
+      console.log("removeLocation error", e);
+    }
   };
 
   const columns = [

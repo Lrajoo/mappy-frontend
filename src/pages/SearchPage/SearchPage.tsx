@@ -29,16 +29,24 @@ const SearchPage = () => {
     if (searchString === "") return;
     setSearchLoading(true);
     const searchQuery = searchString.replace(" ", "+") + "+New+York+City";
-    const res = await getSearchResults(searchQuery);
-    setResults(res.data);
-    setSearchLoading(false);
+    try {
+      const res = await getSearchResults(searchQuery);
+      setResults(res.data);
+      setSearchLoading(false);
+    } catch (e) {
+      console.log("searchPlaces error", e);
+    }
   };
 
   const showLocationCard = async (placeID: string) => {
-    const res = await getPlaceDetails(placeID);
-    setOpen(true);
-    setLocationDetails(res.data);
-    // setDisableLocation(state.placeIds.includes(placeID));
+    try {
+      const res = await getPlaceDetails(placeID);
+      setOpen(true);
+      setLocationDetails(res.data);
+      // setDisableLocation(state.placeIds.includes(placeID));
+    } catch (e) {
+      console.log("showLocationCard error", e);
+    }
   };
 
   const hideLocationCard = () => {
@@ -54,11 +62,15 @@ const SearchPage = () => {
       mustHave: "",
       notes: "",
     };
-    const res = await postLocation(payload);
-    setLoading(false);
-    setDisableLocation(false);
-    setOpen(false);
-    setTimeout(() => message.success(`Added ${locationDetails.name}!`), 1000);
+    try {
+      const res = await postLocation(payload);
+      setLoading(false);
+      setDisableLocation(false);
+      setOpen(false);
+      setTimeout(() => message.success(`Added ${locationDetails.name}!`), 1000);
+    } catch (e) {
+      console.log("addLocation error", e);
+    }
   };
 
   return (

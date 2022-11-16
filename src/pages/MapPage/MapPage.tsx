@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Button, Row, Col, Spin, message } from "antd";
+import { Layout, Button, Row, Spin, message } from "antd";
 import { GoogleMap, Marker } from "@react-google-maps/api";
 import { useNavigate } from "react-router-dom";
 import { getLocations, getPlaceDetails, deleteLocation } from "./MapPageService";
@@ -31,9 +31,13 @@ const MapPage = () => {
   const showLocationCard = async (placeId: string) => {
     setLoading(true);
     setOpen(true);
-    const res = await getPlaceDetails(placeId);
-    setLoading(false);
-    setLocationDetails(res.data);
+    try {
+      const res = await getPlaceDetails(placeId);
+      setLoading(false);
+      setLocationDetails(res.data);
+    } catch (e) {
+      console.log("showLocationCard error", e);
+    }
   };
 
   const hideLocationCard = () => {
@@ -45,11 +49,15 @@ const MapPage = () => {
     let loadedPlaces: any = [];
     let loadedPlaceIds: any = [];
     await res.data.map(async (place: any) => {
-      const locationDetail = await getPlaceDetails(place.placeId);
-      loadedPlaces = [...loadedPlaces, locationDetail.data];
-      loadedPlaceIds = [...loadedPlaceIds, place.placeId];
-      setPlaces(loadedPlaces);
-      setPlaceIds(loadedPlaceIds);
+      try {
+        const locationDetail = await getPlaceDetails(place.placeId);
+        loadedPlaces = [...loadedPlaces, locationDetail.data];
+        loadedPlaceIds = [...loadedPlaceIds, place.placeId];
+        setPlaces(loadedPlaces);
+        setPlaceIds(loadedPlaceIds);
+      } catch (e) {
+        console.log("populateMap error", e);
+      }
     });
   };
 
@@ -59,11 +67,15 @@ const MapPage = () => {
 
   const removeLocation = async () => {
     setLoading(true);
-    const res = await deleteLocation(locationDetails.placeId);
-    populateMap();
-    setLoading(false);
-    setOpen(false);
-    setTimeout(() => message.error(`Removed ${locationDetails.name}!`), 1000);
+    try {
+      const res = await deleteLocation(locationDetails.placeId);
+      populateMap();
+      setLoading(false);
+      setOpen(false);
+      setTimeout(() => message.error(`Removed ${locationDetails.name}!`), 1000);
+    } catch (e) {
+      console.log("removeLocation error", e);
+    }
   };
 
   const center = {
@@ -125,7 +137,7 @@ const MapPage = () => {
             </Button>
             <LocationCard
               open={open}
-              loading={false}
+              loading={loading}
               disableLocation={true}
               hideLocationCard={hideLocationCard}
               addLocation={addLocation}
