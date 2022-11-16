@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Col, Row, Modal, Button } from "antd";
+import { Col, Row, Modal, Button, Spin } from "antd";
 import { DetailedPlace } from "../../interface/detailedPlace";
 
 export interface LocationCardProps {
   open: boolean;
+  loading: boolean;
   disableLocation: boolean;
   locationDetails: DetailedPlace;
   addLocation: () => void;
@@ -25,10 +26,14 @@ const LocationCard = (props: LocationCardProps) => {
 
   const title = props !== undefined && (
     <>
-      <h2>
-        <img src={getIcon(props.locationDetails.category)} alt="Category Icon" />
-        {props.locationDetails.name}
-      </h2>
+      {props.locationDetails.name === undefined && props.locationDetails.category === undefined ? (
+        <></>
+      ) : (
+        <h2>
+          <img src={getIcon(props.locationDetails.category)} alt="Category Icon" style={{ marginRight: "10px" }} />
+          {props.locationDetails.name}
+        </h2>
+      )}
     </>
   );
 
@@ -41,45 +46,53 @@ const LocationCard = (props: LocationCardProps) => {
       style={{ padding: 0 }}
       bodyStyle={{ padding: "20px" }}
     >
-      <Row>
-        <Col span={24}>
-          <Row style={{ marginBottom: "10px", fontSize: "18px" }}>
-            Description:<br></br>
-            {props.locationDetails.description}
+      {props.loading ? (
+        <Row justify="center">
+          <Spin tip="Loading..." size="large" style={{ marginLeft: "auto", marginRight: "auto" }} />
+        </Row>
+      ) : (
+        <>
+          <Row>
+            <Col span={24}>
+              <Row style={{ marginBottom: "10px", fontSize: "18px" }}>
+                Description:<br></br>
+                {props.locationDetails.description}
+              </Row>
+              <Row style={{ marginBottom: "10px", fontSize: "18px" }}>
+                Address:<br></br>
+                {props.locationDetails.address}
+              </Row>
+              <Row style={{ marginBottom: "10px", fontSize: "18px" }}>
+                Hours:<br></br>
+                {props.locationDetails.openingHours && props.locationDetails.openingHours[currentDay]}
+              </Row>
+              <Row style={{ marginBottom: "10px", fontSize: "18px" }}>
+                Contact:<br></br>
+                {props.locationDetails.phoneNumber}
+              </Row>
+              <Row style={{ marginBottom: "30px", fontSize: "18px" }}>
+                {props.locationDetails.location && (
+                  <img
+                    src={`https://maps.googleapis.com/maps/api/staticmap?center=${props.locationDetails.location.lat},${props.locationDetails.location.lng}&zoom=13&size=325x200&markers=color:red%7C${props.locationDetails.location.lat},${props.locationDetails.location.lng}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`}
+                    alt="Pinned Map Location"
+                  />
+                )}
+              </Row>
+              <Row justify="center">
+                {props.disableLocation ? (
+                  <Button type="primary" danger onClick={props.removeLocation}>
+                    Delete Location
+                  </Button>
+                ) : (
+                  <Button type="primary" onClick={props.addLocation}>
+                    Add Location
+                  </Button>
+                )}
+              </Row>
+            </Col>
           </Row>
-          <Row style={{ marginBottom: "10px", fontSize: "18px" }}>
-            Address:<br></br>
-            {props.locationDetails.address}
-          </Row>
-          <Row style={{ marginBottom: "10px", fontSize: "18px" }}>
-            Hours:<br></br>
-            {props.locationDetails.openingHours && props.locationDetails.openingHours[currentDay]}
-          </Row>
-          <Row style={{ marginBottom: "10px", fontSize: "18px" }}>
-            Contact:<br></br>
-            {props.locationDetails.phoneNumber}
-          </Row>
-          <Row style={{ marginBottom: "30px", fontSize: "18px" }}>
-            {props.locationDetails.location && (
-              <img
-                src={`https://maps.googleapis.com/maps/api/staticmap?center=${props.locationDetails.location.lat},${props.locationDetails.location.lng}&zoom=13&size=325x200&markers=color:red%7C${props.locationDetails.location.lat},${props.locationDetails.location.lng}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`}
-                alt="Pinned Map Location"
-              />
-            )}
-          </Row>
-          <Row justify="center">
-            {props.disableLocation ? (
-              <Button type="primary" danger onClick={props.removeLocation}>
-                Delete Location
-              </Button>
-            ) : (
-              <Button type="primary" onClick={props.addLocation}>
-                Add Location
-              </Button>
-            )}
-          </Row>
-        </Col>
-      </Row>
+        </>
+      )}
     </Modal>
   );
 };

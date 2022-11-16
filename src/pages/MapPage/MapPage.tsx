@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Button } from "antd";
+import { Layout, Button, Row, Col, Spin, message } from "antd";
 import { GoogleMap, Marker } from "@react-google-maps/api";
 import { useNavigate } from "react-router-dom";
 import { getLocations, getPlaceDetails, deleteLocation } from "./MapPageService";
@@ -17,6 +17,7 @@ const MapPage = () => {
   const [placeIds, setPlaceIds] = useState([]);
   const [locationDetails, setLocationDetails] = useState({}) as any;
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   let navigate = useNavigate();
 
   useEffect(() => {
@@ -28,8 +29,10 @@ const MapPage = () => {
   };
 
   const showLocationCard = async (placeId: string) => {
-    const res = await getPlaceDetails(placeId);
+    setLoading(true);
     setOpen(true);
+    const res = await getPlaceDetails(placeId);
+    setLoading(false);
     setLocationDetails(res.data);
   };
 
@@ -55,9 +58,12 @@ const MapPage = () => {
   };
 
   const removeLocation = async () => {
+    setLoading(true);
     const res = await deleteLocation(locationDetails.placeId);
-    setOpen(false);
     populateMap();
+    setLoading(false);
+    setOpen(false);
+    setTimeout(() => message.error(`Removed ${locationDetails.name}!`), 1000);
   };
 
   const center = {
@@ -75,54 +81,63 @@ const MapPage = () => {
       <Sidebar collapsed={sidebarCollapsed} toggleSidebarView={toggleSidebarView} />
       <Content>
         <Header toggleSidebarView={toggleSidebarView} />
-        <GoogleMap
-          mapContainerStyle={{ width: "100vw", height: "93vh" }}
-          center={center}
-          zoom={13}
-          options={{
-            fullscreenControl: false,
-            mapTypeControl: false,
-            streetViewControl: false,
-            zoomControlOptions: { position: 6.0 },
-          }}
-        >
-          <Marker
-            position={currentLocation}
-            icon="https://img.icons8.com/external-anggara-blue-anggara-putra/35/null/external-user-user-interface-basic-anggara-blue-anggara-putra.png"
-          />
-          {places.length > 0 &&
-            places.map((place: any) => {
-              return (
-                <Marker
-                  key={place.placeId}
-                  icon={getCategory(place.category)}
-                  position={place.location}
-                  onClick={() => showLocationCard(place.placeId)}
-                />
-              );
-            })}
-        </GoogleMap>
-        <Button
-          type="primary"
-          style={{ position: "absolute", bottom: "4vh", right: "2vh" }}
-          onClick={() =>
-            navigate("/search", {
-              state: {
-                placeIds: placeIds,
-              },
-            })
-          }
-        >
-          Add Location
-        </Button>
-        <LocationCard
-          open={open}
-          disableLocation={true}
-          hideLocationCard={hideLocationCard}
-          addLocation={addLocation}
-          removeLocation={removeLocation}
-          locationDetails={locationDetails}
-        />
+        {places.length > 0 ? (
+          <>
+            <GoogleMap
+              mapContainerStyle={{ width: "100vw", height: "93vh" }}
+              center={center}
+              zoom={13}
+              options={{
+                fullscreenControl: false,
+                mapTypeControl: false,
+                streetViewControl: false,
+                zoomControlOptions: { position: 6.0 },
+              }}
+            >
+              <Marker
+                position={currentLocation}
+                icon="https://img.icons8.com/external-anggara-blue-anggara-putra/35/null/external-user-user-interface-basic-anggara-blue-anggara-putra.png"
+              />
+              {places.length > 0 &&
+                places.map((place: any) => {
+                  return (
+                    <Marker
+                      key={place.placeId}
+                      icon={getCategory(place.category)}
+                      position={place.location}
+                      onClick={() => showLocationCard(place.placeId)}
+                    />
+                  );
+                })}
+            </GoogleMap>
+            <Button
+              type="primary"
+              style={{ position: "absolute", bottom: "4vh", right: "2vh" }}
+              onClick={() =>
+                navigate("/search", {
+                  state: {
+                    placeIds: placeIds,
+                  },
+                })
+              }
+            >
+              Add Location
+            </Button>
+            <LocationCard
+              open={open}
+              loading={false}
+              disableLocation={true}
+              hideLocationCard={hideLocationCard}
+              addLocation={addLocation}
+              removeLocation={removeLocation}
+              locationDetails={locationDetails}
+            />
+          </>
+        ) : (
+          <Row justify="center" align="middle" style={{ height: "93vh", width: "100vw" }}>
+            <Spin tip="Loading..." size="large" />
+          </Row>
+        )}
       </Content>
     </Layout>
   );

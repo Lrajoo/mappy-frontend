@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Col, Row, Layout, Table, Button, Tag } from "antd";
+import { Col, Row, Layout, Table, Button, Tag, Spin, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import { getPlaceDetails, getLocations, deleteLocation } from "./ListPageService";
 import Header from "../../components/Header/Header";
@@ -15,6 +15,7 @@ const ListPage = () => {
   const [places, setPlaces] = useState([]);
   const [placeIds, setPlaceIds] = useState([]);
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   let navigate = useNavigate();
 
   useEffect(() => {
@@ -40,8 +41,10 @@ const ListPage = () => {
   };
 
   const showLocationCard = async (placeID: string) => {
-    const res = await getPlaceDetails(placeID);
+    setLoading(true);
     setOpen(true);
+    const res = await getPlaceDetails(placeID);
+    setLoading(false);
     setLocationDetails(res.data);
   };
 
@@ -54,9 +57,12 @@ const ListPage = () => {
   };
 
   const removeLocation = async () => {
+    setLoading(true);
     const res = await deleteLocation(locationDetails.placeId);
-    setOpen(false);
     populateList();
+    setLoading(false);
+    setOpen(false);
+    setTimeout(() => message.error(`Removed ${locationDetails.name}!`), 1000);
   };
 
   const columns = [
@@ -101,51 +107,60 @@ const ListPage = () => {
       <Sidebar collapsed={sidebarCollapsed} toggleSidebarView={toggleSidebarView} />
       <Content>
         <Header toggleSidebarView={toggleSidebarView} />
-        <Row style={{ marginTop: "10px", marginBottom: "10px" }}>
-          <Col span={12}>
-            <Row justify="start" style={{ fontSize: "18px", fontWeight: "bold", marginLeft: "20px" }}>
-              My List
+        {places.length > 0 ? (
+          <>
+            <Row style={{ marginTop: "10px", marginBottom: "10px" }}>
+              <Col span={12}>
+                <Row justify="start" style={{ fontSize: "18px", fontWeight: "bold", marginLeft: "20px" }}>
+                  My List
+                </Row>
+              </Col>
+              <Col span={12}>
+                <Row justify="end" style={{ marginRight: "20px" }}>
+                  <Button type="primary">Filter</Button>
+                </Row>
+              </Col>
             </Row>
-          </Col>
-          <Col span={12}>
-            <Row justify="end" style={{ marginRight: "20px" }}>
-              <Button type="primary">Filter</Button>
-            </Row>
-          </Col>
-        </Row>
-        <Table
-          columns={columns}
-          dataSource={places}
-          pagination={false}
-          onRow={(record: any) => {
-            return {
-              onClick: () => {
-                showLocationCard(record.placeId);
-              },
-            };
-          }}
-        />
-        <Button
-          type="primary"
-          style={{ position: "fixed", bottom: "4vh", right: "2vh" }}
-          onClick={() => {
-            navigate("/search", {
-              state: {
-                placeIds: placeIds,
-              },
-            });
-          }}
-        >
-          Add Location
-        </Button>
-        <LocationCard
-          open={open}
-          disableLocation={true}
-          hideLocationCard={hideLocationCard}
-          addLocation={addLocation}
-          removeLocation={removeLocation}
-          locationDetails={locationDetails}
-        />
+            <Table
+              columns={columns}
+              dataSource={places}
+              pagination={false}
+              onRow={(record: any) => {
+                return {
+                  onClick: () => {
+                    showLocationCard(record.placeId);
+                  },
+                };
+              }}
+            />
+            <Button
+              type="primary"
+              style={{ position: "fixed", bottom: "4vh", right: "2vh" }}
+              onClick={() => {
+                navigate("/search", {
+                  state: {
+                    placeIds: placeIds,
+                  },
+                });
+              }}
+            >
+              Add Location
+            </Button>
+            <LocationCard
+              open={open}
+              loading={loading}
+              disableLocation={true}
+              hideLocationCard={hideLocationCard}
+              addLocation={addLocation}
+              removeLocation={removeLocation}
+              locationDetails={locationDetails}
+            />
+          </>
+        ) : (
+          <Row justify="center" align="middle" style={{ height: "93vh", width: "100vw" }}>
+            <Spin tip="Loading..." size="large" />
+          </Row>
+        )}
       </Content>
     </Layout>
   );
