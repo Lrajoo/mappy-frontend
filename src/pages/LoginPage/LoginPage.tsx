@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Button, Row, Layout, Input } from "antd";
-import { PhoneOutlined, CheckOutlined } from "@ant-design/icons";
+import { Button, Row, Layout, Input, message } from "antd";
+import { PhoneOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import {} from "./LoginPageService";
+import { postLogin, postVerify } from "./LoginPageService";
 import "./LoginPage.css";
 
 const { Content } = Layout;
@@ -15,14 +15,33 @@ const LoginPage = () => {
 
   useEffect(() => {}, []);
 
-  const login = () => {
+  const login = async () => {
     if (phoneNumber.length !== 10) return;
-    console.log(phoneNumber);
-    setVerifyStatus(true);
+    const payload = {
+      phoneNumber: phoneNumber,
+    };
+    try {
+      const res = await postLogin(payload);
+      setVerifyStatus(true);
+    } catch (e) {
+      console.log("login error", e);
+    }
   };
 
-  const verify = () => {
-    console.log(verificationCode);
+  const verify = async () => {
+    const payload = {
+      phoneNumber: phoneNumber,
+      verificationCode: verificationCode,
+    };
+    try {
+      const res = await postVerify(payload);
+      if (res.data.status === "approved") {
+        navigate("/map");
+        setTimeout(() => message.success("Signed In!"), 1000);
+      }
+    } catch (e) {
+      console.log("verify error", e);
+    }
   };
 
   const signUp = () => {

@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from "react";
-import type { MenuProps } from "antd";
-import { Col, Row, Layout, Input, Button, Form, Select } from "antd";
-import { DownOutlined } from "@ant-design/icons";
+import React, { useState } from "react";
+import { Row, Layout, Input, Button, Form, Select, message } from "antd";
 import { useNavigate } from "react-router-dom";
-import {} from "./SignUpPageService";
+import { postUser } from "./SignUpPageService";
 import "./SignUpPage.css";
 
 const { Content } = Layout;
@@ -11,20 +9,26 @@ const { Content } = Layout;
 const SignUpPage = () => {
   const [firstName, setFirstName] = useState("");
   const [lasttName, setLastName] = useState("");
-  const [emailAddress, setEmailAddress] = useState("");
+  const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [homeCity, setHomeCity] = useState("");
   let navigate = useNavigate();
 
-  const signUp = () => {
+  const signUp = async () => {
     const payload = {
       firstName: firstName,
-      lasttName: lasttName,
-      emailAddress: emailAddress,
+      lastName: lasttName,
+      email: email,
       phoneNumber: phoneNumber,
       homeCity: homeCity,
     };
-    console.log(payload);
+    try {
+      const res = await postUser(payload);
+      navigate("/");
+      setTimeout(() => message.success(`Signed Up! Login to Start!`), 1000);
+    } catch (e) {
+      console.log("signUp error", e);
+    }
   };
 
   const login = () => {
@@ -61,7 +65,7 @@ const SignUpPage = () => {
               <Input placeholder="Last Name" onChange={(e) => setLastName(e.target.value)} />
             </Form.Item>
             <Form.Item label="Email Address">
-              <Input placeholder="Email Address" onChange={(e) => setEmailAddress(e.target.value)} />
+              <Input placeholder="Email Address" onChange={(e) => setEmail(e.target.value)} />
             </Form.Item>
             <Form.Item label="Phone Number">
               <Input placeholder="Phone Number" onChange={(e) => setPhoneNumber(e.target.value)} />
@@ -75,11 +79,15 @@ const SignUpPage = () => {
                 filterOption={(input, option) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase())}
                 options={[
                   {
-                    value: "San Francisco, CA",
+                    value: "Boston,Massachusetts",
+                    label: "Boston, MA",
+                  },
+                  {
+                    value: "San Francisco,California",
                     label: "San Francisco, CA",
                   },
                   {
-                    value: "New York City, NY",
+                    value: "New York City,New York",
                     label: "New York City, NY",
                   },
                 ]}
@@ -91,7 +99,7 @@ const SignUpPage = () => {
                 onClick={() => {
                   signUp();
                 }}
-                style={{ width: "100%" }}
+                style={{ width: "100%", backgroundColor: "#FFFFFF", border: 0, color: "#620CA5" }}
               >
                 Sign Up
               </Button>
