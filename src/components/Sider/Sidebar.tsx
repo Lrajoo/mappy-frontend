@@ -39,7 +39,7 @@ const Sidebar = (props: SidebarProps) => {
             </Button>
           </Row>
           <Row style={{ marginBottom: "10px" }} justify="space-around">
-            <Button style={{ color: "#FFFFFF" }} type="link" onClick={() => navigate("/map")}>
+            <Button style={{ color: "#FFFFFF" }} type="link" onClick={() => navigate("/")}>
               Map
             </Button>
           </Row>

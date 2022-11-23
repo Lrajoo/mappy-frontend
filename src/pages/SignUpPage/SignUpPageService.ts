@@ -6,3 +6,13 @@ export const postUser = async (payload: object) => {
   const res = await axios.post(`${api}/mappy/api/users`, payload);
   return res;
 };
+
+export const postLogin = async (payload: object) => {
+  const res = await axios.post(`${api}/mappy/api/login`, payload);
+  return res;
+};
+
+export const postVerify = async (payload: object) => {
+  const res = await axios.post(`${api}/mappy/api/verify`, payload);
+  return res;
+};

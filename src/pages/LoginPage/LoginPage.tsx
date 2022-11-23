@@ -7,7 +7,11 @@ import "./LoginPage.css";
 
 const { Content } = Layout;
 
-const LoginPage = () => {
+export interface LoginPageInterface {
+  authenticateUser: (userData: object) => void;
+}
+
+const LoginPage = (props: LoginPageInterface) => {
   const [verifyStatus, setVerifyStatus] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
@@ -24,7 +28,7 @@ const LoginPage = () => {
       const res = await postLogin(payload);
       setVerifyStatus(true);
     } catch (e) {
-      console.log("login error", e);
+      console.error("login error", e);
     }
   };
 
@@ -35,12 +39,13 @@ const LoginPage = () => {
     };
     try {
       const res = await postVerify(payload);
-      if (res.data.status === "approved") {
-        navigate("/map");
+      if (res.data.loginStatus) {
+        props.authenticateUser(res.data);
+        navigate("/");
         setTimeout(() => message.success("Signed In!"), 1000);
       }
     } catch (e) {
-      console.log("verify error", e);
+      console.error("verify error", e);
     }
   };
 

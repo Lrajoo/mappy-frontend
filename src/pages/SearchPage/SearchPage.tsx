@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useLocation } from "react-router-dom";
 import { Col, Row, Layout, Input, message } from "antd";
 import { getSearchResults, getPlaceDetails, postLocation } from "./SearchPageService";
@@ -6,6 +6,7 @@ import Header from "../../components/Header/Header";
 import Sidebar from "../../components/Sider/Sidebar";
 import ResultCard from "../../components/ResultCard/ResultCard";
 import LocationCard from "../../components/LocationCard/LocationCard";
+import { AuthContext } from "../../components/AuthContext/AuthContext";
 import "./SearchPage.css";
 
 const { Content } = Layout;
@@ -20,6 +21,7 @@ const SearchPage = () => {
   const [searchLoading, setSearchLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const { state } = useLocation();
+  const { loginStatus, userId, firstName, lastName, userName, homeCity, homeState } = useContext(AuthContext);
 
   const toggleSidebarView = (collapsed: boolean) => {
     setSidebarCollapsed(collapsed);
@@ -34,7 +36,7 @@ const SearchPage = () => {
       setResults(res.data);
       setSearchLoading(false);
     } catch (e) {
-      console.log("searchPlaces error", e);
+      console.error("searchPlaces error", e);
     }
   };
 
@@ -45,7 +47,7 @@ const SearchPage = () => {
       setLocationDetails(res.data);
       // setDisableLocation(state.placeIds.includes(placeID));
     } catch (e) {
-      console.log("showLocationCard error", e);
+      console.error("showLocationCard error", e);
     }
   };
 
@@ -69,7 +71,7 @@ const SearchPage = () => {
       setOpen(false);
       setTimeout(() => message.success(`Added ${locationDetails.name}!`), 1000);
     } catch (e) {
-      console.log("addLocation error", e);
+      console.error("addLocation error", e);
     }
   };
 

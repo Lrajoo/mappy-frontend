@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Col, Row, Layout, Table, Button, Tag, Spin, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import { getPlaceDetails, getLocations, deleteLocation } from "./ListPageService";
 import Header from "../../components/Header/Header";
 import Sidebar from "../../components/Sider/Sidebar";
 import LocationCard from "../../components/LocationCard/LocationCard";
+import { AuthContext } from "../../components/AuthContext/AuthContext";
 import "./ListPage.css";
 
 const { Content } = Layout;
@@ -16,6 +17,7 @@ const ListPage = () => {
   const [placeIds, setPlaceIds] = useState([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { loginStatus, userId, firstName, lastName, userName, homeCity, homeState } = useContext(AuthContext);
   let navigate = useNavigate();
 
   useEffect(() => {
@@ -35,7 +37,7 @@ const ListPage = () => {
         setPlaces(loadedPlaces);
         setPlaceIds(loadedPlaceIds);
       } catch (e) {
-        console.log("populateList error", e);
+        console.error("populateList error", e);
       }
     });
   };
@@ -69,7 +71,7 @@ const ListPage = () => {
       setOpen(false);
       setTimeout(() => message.error(`Removed ${locationDetails.name}!`), 1000);
     } catch (e) {
-      console.log("removeLocation error", e);
+      console.error("removeLocation error", e);
     }
   };
 

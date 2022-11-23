@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Layout, Button, Row, Spin, message } from "antd";
 import { GoogleMap, Marker } from "@react-google-maps/api";
 import { useNavigate } from "react-router-dom";
@@ -6,6 +6,7 @@ import { getLocations, getPlaceDetails, deleteLocation } from "./MapPageService"
 import Header from "../../components/Header/Header";
 import Sidebar from "../../components/Sider/Sidebar";
 import LocationCard from "../../components/LocationCard/LocationCard";
+import { AuthContext } from "../../components/AuthContext/AuthContext";
 import { getCategory } from "../../utils/category";
 import "./MapPage.css";
 
@@ -19,6 +20,7 @@ const MapPage = () => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   let navigate = useNavigate();
+  const { loginStatus, userId, firstName, lastName, userName, homeCity, homeState } = useContext(AuthContext);
 
   useEffect(() => {
     populateMap();
@@ -36,7 +38,7 @@ const MapPage = () => {
       setLoading(false);
       setLocationDetails(res.data);
     } catch (e) {
-      console.log("showLocationCard error", e);
+      console.error("showLocationCard error", e);
     }
   };
 
@@ -56,7 +58,7 @@ const MapPage = () => {
         setPlaces(loadedPlaces);
         setPlaceIds(loadedPlaceIds);
       } catch (e) {
-        console.log("populateMap error", e);
+        console.error("populateMap error", e);
       }
     });
   };
@@ -74,7 +76,7 @@ const MapPage = () => {
       setOpen(false);
       setTimeout(() => message.error(`Removed ${locationDetails.name}!`), 1000);
     } catch (e) {
-      console.log("removeLocation error", e);
+      console.error("removeLocation error", e);
     }
   };
 
@@ -89,6 +91,7 @@ const MapPage = () => {
   };
 
   return (
+    // <AuthContext.Consumer>
     <Layout>
       <Sidebar collapsed={sidebarCollapsed} toggleSidebarView={toggleSidebarView} />
       <Content>
@@ -152,6 +155,7 @@ const MapPage = () => {
         )}
       </Content>
     </Layout>
+    // </AuthContext.Consumer>
   );
 };
 
