@@ -27,6 +27,7 @@ const MapPage = () => {
   }, []);
 
   const toggleSidebarView = (collapsed: boolean) => {
+    test();
     setSidebarCollapsed(collapsed);
   };
 
@@ -65,6 +66,10 @@ const MapPage = () => {
 
   const addLocation = () => {
     setOpen(false);
+  };
+
+  const test = () => {
+    console.log(loginStatus, userId, firstName, lastName, userName, homeCity, homeState);
   };
 
   const removeLocation = async () => {

@@ -12,6 +12,11 @@ export interface SidebarProps {
 const Sidebar = (props: SidebarProps) => {
   let navigate = useNavigate();
 
+  const logout = () => {
+    localStorage.removeItem("userData");
+    navigate("/login");
+  };
+
   return (
     <Sider
       style={{ position: "absolute", height: "100vh", zIndex: 2, backgroundColor: "#282828E1" }}
@@ -20,7 +25,7 @@ const Sidebar = (props: SidebarProps) => {
       collapsed={props.collapsed}
       collapsedWidth={0}
     >
-      <Row>
+      <Row style={{ height: "90vh" }}>
         <Col span={24}>
           <Row justify="end">
             <CloseOutlined
@@ -49,6 +54,9 @@ const Sidebar = (props: SidebarProps) => {
             </Button>
           </Row>
         </Col>
+      </Row>
+      <Row justify="space-around">
+        <Button onClick={() => logout()}>Logout</Button>
       </Row>
     </Sider>
   );

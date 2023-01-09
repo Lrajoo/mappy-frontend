@@ -164,7 +164,6 @@ const SignUpPage = (props: SignUpPageInterface) => {
       if (res.data.loginStatus) {
         props.authenticateUser(res.data);
         navigate("/");
-        localStorage.setItem("isLoggedIn", "active");
         setTimeout(() => message.success("Welcome to Mappy!"), 1000);
       }
     } catch (e) {

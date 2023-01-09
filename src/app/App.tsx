@@ -21,7 +21,15 @@ function App() {
     homeState: "",
   });
 
+  useEffect(() => {
+    const userData = JSON.parse(localStorage.getItem("userData") ?? "{}");
+    console.log("userData effect", userData);
+    setUserData(userData);
+  }, []);
+
   const authenticateUser = (userData: any) => {
+    localStorage.setItem("userData", JSON.stringify(userData));
+    console.log("userData auth", userData);
     setUserData(userData);
     return;
   };
@@ -46,7 +54,7 @@ function App() {
             <Route path="/" element={<MapPage />} />
             <Route path="/list" element={<ListPage />} />
             <Route path="/search" element={<SearchPage />} />
-          </Route>{" "}
+          </Route>
         </Routes>
       </AuthContext.Provider>
     </BrowserRouter>

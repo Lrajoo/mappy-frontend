@@ -4,8 +4,9 @@ import { AuthContext } from "../../components/AuthContext/AuthContext";
 
 const PrivateRoute = () => {
   const { loginStatus } = useContext(AuthContext);
-  const loggedInStatus = localStorage.getItem("isLoggedIn");
-  return loginStatus || loggedInStatus === "active" ? <Outlet /> : <Navigate to="/login" />;
+  const userData = JSON.parse(localStorage.getItem("userData") ?? "{}");
+  console.log("userData private", userData);
+  return loginStatus || userData.loginStatus ? <Outlet /> : <Navigate to="/login" />;
 };
 
 export default PrivateRoute;

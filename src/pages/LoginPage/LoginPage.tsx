@@ -61,7 +61,6 @@ const LoginPage = (props: LoginPageInterface) => {
       if (res.data.loginStatus) {
         props.authenticateUser(res.data);
         navigate("/");
-        localStorage.setItem("isLoggedIn", "active");
         setTimeout(() => message.success(`Welcome back ${userName}!`), 1000);
       }
     } catch (e) {
