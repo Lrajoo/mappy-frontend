@@ -13,6 +13,7 @@ export interface LoginPageInterface {
 }
 
 const LoginPage = (props: LoginPageInterface) => {
+  const [loading, setLoading] = useState(false);
   const [verifyStatus, setVerifyStatus] = useState(false);
   const [verificationCodeFormStatus, setVerificationCodeFormStatus] = useState("") as any;
   const [verificationCodeFormMessage, setVerificationCodeFormMessage] = useState("");
@@ -35,8 +36,9 @@ const LoginPage = (props: LoginPageInterface) => {
       phoneNumber: phoneNumber,
     };
     try {
-      console.log(payload);
+      setLoading(true);
       const res = await postLogin(payload);
+      setLoading(false);
       setVerifyStatus(true);
       setTimeout(() => message.success("Verification code sent!"), 1000);
     } catch (e) {
@@ -53,11 +55,13 @@ const LoginPage = (props: LoginPageInterface) => {
       verificationCode: verificationCode,
     };
     try {
+      setLoading(true);
       const res = await postVerify(payload);
-      console.log("res.data.loginStatus", res);
+      setLoading(false);
       if (res.data.loginStatus) {
         props.authenticateUser(res.data);
         navigate("/");
+        localStorage.setItem("isLoggedIn", "active");
         setTimeout(() => message.success(`Welcome back ${userName}!`), 1000);
       }
     } catch (e) {
@@ -149,7 +153,7 @@ const LoginPage = (props: LoginPageInterface) => {
               <Button
                 type="primary"
                 size="large"
-                // loading={loginStatus}
+                loading={loading}
                 onClick={() => verify()}
                 style={{
                   backgroundColor: "#FFFFFF",
@@ -165,19 +169,12 @@ const LoginPage = (props: LoginPageInterface) => {
               <Button
                 type="link"
                 size="large"
-                // loading={loginStatus}
                 onClick={() => enterPhonerNumber()}
                 style={{ color: "#FFFFFF", width: "80%" }}
               >
                 Re-enter Phone Number
               </Button>
-              <Button
-                type="link"
-                size="large"
-                // loading={loginStatus}
-                onClick={() => login()}
-                style={{ color: "#FFFFFF", width: "80%" }}
-              >
+              <Button type="link" size="large" onClick={() => login()} style={{ color: "#FFFFFF", width: "80%" }}>
                 Resend verification code
               </Button>
             </>
@@ -185,7 +182,7 @@ const LoginPage = (props: LoginPageInterface) => {
             <Button
               type="primary"
               size="large"
-              // loading={loginStatus}
+              loading={loading}
               onClick={() => login()}
               style={{ backgroundColor: "#FFFFFF", color: "#620CA5", fontWeight: "bold", border: "0", width: "80%" }}
             >

@@ -12,6 +12,7 @@ export interface SignUpPageInterface {
 }
 
 const SignUpPage = (props: SignUpPageInterface) => {
+  const [loading, setLoading] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [firstNameFormStatus, setFirstNameFormStatus] = useState("") as any;
   const [firstNameFormMessage, setFirstNameFormMessage] = useState("");
@@ -35,6 +36,8 @@ const SignUpPage = (props: SignUpPageInterface) => {
   const [dateOfBirthFormMessage, setDateOfBirthFormMessage] = useState("");
   const [verifyStatus, setVerifyStatus] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
+  const [verificationCodeFormStatus, setVerificationCodeFormStatus] = useState("") as any;
+  const [verificationCodeFormMessage, setVerificationCodeFormMessage] = useState("");
   const dateFormatList = "DD/MM/YYYY";
   let navigate = useNavigate();
 
@@ -131,8 +134,11 @@ const SignUpPage = (props: SignUpPageInterface) => {
       homeCity: homeCity,
     };
     try {
+      setLoading(true);
       const resPostUser = await postUser(payload);
       const resPostLogin = await postLogin(payload);
+      setLoading(false);
+      setTimeout(() => message.success("Verification code sent!"), 1000);
       setVerifyStatus(true);
     } catch (e: any) {
       console.error("signUp error", e);
@@ -152,19 +158,30 @@ const SignUpPage = (props: SignUpPageInterface) => {
       verificationCode: verificationCode,
     };
     try {
+      setLoading(true);
       const res = await postVerify(payload);
+      setLoading(false);
       if (res.data.loginStatus) {
         props.authenticateUser(res.data);
         navigate("/");
+        localStorage.setItem("isLoggedIn", "active");
         setTimeout(() => message.success("Welcome to Mappy!"), 1000);
       }
     } catch (e) {
+      setVerificationCodeFormStatus("error");
+      setVerificationCodeFormMessage("Enter the correct code");
       console.error("verify error", e);
     }
   };
 
   const login = () => {
     navigate("/login");
+  };
+
+  const updateVerificationCode = (verificationCode: string) => {
+    setVerificationCodeFormStatus("");
+    setVerificationCodeFormMessage("");
+    setVerificationCode(verificationCode);
   };
 
   return (
@@ -189,95 +206,111 @@ const SignUpPage = (props: SignUpPageInterface) => {
           </h1>
         </Row>
         <Row justify="center">
-          {verifyStatus ? (
-            <Input
-              size="large"
-              placeholder="Verification Code"
-              style={{ width: "70%" }}
-              value={verificationCode}
-              onChange={(e) => setVerificationCode(e.target.value)}
-            />
-          ) : (
-            <Form>
-              <Form.Item label="First Name" validateStatus={firstNameFormStatus} help={firstNameFormMessage}>
-                <Input placeholder="First Name" onChange={(e) => updateFirstName(e.target.value)} />
-              </Form.Item>
-              <Form.Item label="Last Name" validateStatus={lastNameFormStatus} help={lastNameFormMessage}>
-                <Input placeholder="Last Name" onChange={(e) => updateLastName(e.target.value)} />
-              </Form.Item>
-              <Form.Item label="Username" validateStatus={userNameFormStatus} help={userNameFormMessage}>
-                <Input placeholder="Username" onChange={(e) => updateUserName(e.target.value)} />
-              </Form.Item>
-              <Form.Item label="Email Address" validateStatus={emailFormStatus} help={emailFormMessage}>
-                <Input placeholder="Email Address" onChange={(e) => updateEmail(e.target.value)} />
-              </Form.Item>
-              <Form.Item label="Phone Number" validateStatus={phoneNumberFormStatus} help={phoneNumberFormMessage}>
-                <Input placeholder="Phone Number" onChange={(e) => updatePhoneNumber(e.target.value)} />
-              </Form.Item>
-              <Form.Item label="Date of Birth" validateStatus={dateOfBirthFormStatus} help={dateOfBirthFormMessage}>
-                <DatePicker
-                  placeholder="Select date of birth"
-                  format={dateFormatList}
-                  onChange={(value) => updateDateOfBirth(value)}
-                  style={{ width: "100%" }}
+          <Form style={{ width: "80%" }}>
+            {verifyStatus ? (
+              <Form.Item
+                label="Verification Code"
+                validateStatus={verificationCodeFormStatus}
+                help={verificationCodeFormMessage}
+              >
+                <Input
+                  size="large"
+                  placeholder="Verification Code"
+                  value={verificationCode}
+                  onChange={(e) => updateVerificationCode(e.target.value)}
                 />
               </Form.Item>
-              <Form.Item label="Home City" validateStatus={homeCityFormStatus} help={homeCityFormMessage}>
-                <Select
-                  showSearch
-                  placeholder="Select your home city"
-                  optionFilterProp="children"
-                  onChange={(city) => updateHomeCity(city)}
-                  filterOption={(input, option) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase())}
-                  options={[
-                    {
-                      value: "Boston,Massachusetts",
-                      label: "Boston, MA",
-                    },
-                    {
-                      value: "San Francisco,California",
-                      label: "San Francisco, CA",
-                    },
-                    {
-                      value: "New York City,New York",
-                      label: "New York City, NY",
-                    },
-                  ]}
-                />
-              </Form.Item>
-              <Form.Item style={{ marginTop: "30px" }}>
-                <Button
-                  type="primary"
-                  onClick={() => {
-                    validateForm() && signUp();
-                  }}
-                  style={{ width: "100%", backgroundColor: "#FFFFFF", border: 0, color: "#620CA5", fontWeight: "bold" }}
-                >
-                  Sign Up
-                </Button>
-              </Form.Item>
-            </Form>
-          )}
+            ) : (
+              <>
+                <Form.Item label="First Name" validateStatus={firstNameFormStatus} help={firstNameFormMessage}>
+                  <Input placeholder="First Name" onChange={(e) => updateFirstName(e.target.value)} />
+                </Form.Item>
+                <Form.Item label="Last Name" validateStatus={lastNameFormStatus} help={lastNameFormMessage}>
+                  <Input placeholder="Last Name" onChange={(e) => updateLastName(e.target.value)} />
+                </Form.Item>
+                <Form.Item label="Username" validateStatus={userNameFormStatus} help={userNameFormMessage}>
+                  <Input placeholder="Username" onChange={(e) => updateUserName(e.target.value)} />
+                </Form.Item>
+                <Form.Item label="Email Address" validateStatus={emailFormStatus} help={emailFormMessage}>
+                  <Input placeholder="Email Address" onChange={(e) => updateEmail(e.target.value)} />
+                </Form.Item>
+                <Form.Item label="Phone Number" validateStatus={phoneNumberFormStatus} help={phoneNumberFormMessage}>
+                  <Input placeholder="Phone Number" onChange={(e) => updatePhoneNumber(e.target.value)} />
+                </Form.Item>
+                <Form.Item label="Date of Birth" validateStatus={dateOfBirthFormStatus} help={dateOfBirthFormMessage}>
+                  <DatePicker
+                    placeholder="Select date of birth"
+                    format={dateFormatList}
+                    onChange={(value) => updateDateOfBirth(value)}
+                    style={{ width: "100%" }}
+                  />
+                </Form.Item>
+                <Form.Item label="Home City" validateStatus={homeCityFormStatus} help={homeCityFormMessage}>
+                  <Select
+                    showSearch
+                    placeholder="Select your home city"
+                    optionFilterProp="children"
+                    onChange={(city) => updateHomeCity(city)}
+                    filterOption={(input, option) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase())}
+                    options={[
+                      {
+                        value: "Boston,Massachusetts",
+                        label: "Boston, MA",
+                      },
+                      {
+                        value: "San Francisco,California",
+                        label: "San Francisco, CA",
+                      },
+                      {
+                        value: "New York City,New York",
+                        label: "New York City, NY",
+                      },
+                    ]}
+                  />
+                </Form.Item>
+                <Form.Item style={{ marginTop: "30px" }}>
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      validateForm() && signUp();
+                    }}
+                    loading={loading}
+                    style={{
+                      width: "100%",
+                      backgroundColor: "#FFFFFF",
+                      border: 0,
+                      color: "#620CA5",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Sign Up
+                  </Button>
+                </Form.Item>
+              </>
+            )}
+          </Form>
         </Row>
         <Row justify="center">
           {verifyStatus && (
-            <Button
-              type="primary"
-              size="large"
-              // loading={loginStatus}
-              onClick={() => verify()}
-              style={{
-                backgroundColor: "#FFFFFF",
-                color: "#620CA5",
-                fontWeight: "bold",
-                border: "0",
-                width: "70%",
-                marginTop: "20px",
-                marginBottom: "10px",
-              }}
-            >
-              Verify
-            </Button>
+            <>
+              <Button
+                type="primary"
+                size="large"
+                loading={loading}
+                onClick={() => verify()}
+                style={{
+                  backgroundColor: "#FFFFFF",
+                  color: "#620CA5",
+                  fontWeight: "bold",
+                  border: "0",
+                  width: "80%",
+                  marginTop: "20px",
+                  marginBottom: "10px",
+                }}
+              >
+                Verify
+              </Button>
+            </>
           )}
           <Button type="link" style={{ color: "#FFFFFF", marginBottom: "30px" }} onClick={() => login()}>
             Back to Login Page
