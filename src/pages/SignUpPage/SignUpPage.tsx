@@ -13,21 +13,117 @@ export interface SignUpPageInterface {
 
 const SignUpPage = (props: SignUpPageInterface) => {
   const [firstName, setFirstName] = useState("");
-  const [lasttName, setLastName] = useState("");
+  const [firstNameFormStatus, setFirstNameFormStatus] = useState("") as any;
+  const [firstNameFormMessage, setFirstNameFormMessage] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [lastNameFormStatus, setLastNameFormStatus] = useState("") as any;
+  const [lastNameFormMessage, setLastNameFormMessage] = useState("");
   const [userName, setUserName] = useState("");
+  const [userNameFormStatus, setUserNameFormStatus] = useState("") as any;
+  const [userNameFormMessage, setUserNameFormMessage] = useState("");
   const [email, setEmail] = useState("");
+  const [emailFormStatus, setEmailFormStatus] = useState("") as any;
+  const [emailFormMessage, setEmailFormMessage] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [phoneNumberFormStatus, setPhoneNumberFormStatus] = useState("") as any;
+  const [phoneNumberFormMessage, setPhoneNumberFormMessage] = useState("");
   const [homeCity, setHomeCity] = useState("");
+  const [homeCityFormStatus, setHomeCityFormStatus] = useState("") as any;
+  const [homeCityFormMessage, setHomeCityFormMessage] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState({}) as any;
+  const [dateOfBirthFormStatus, setDateOfBirthFormStatus] = useState("") as any;
+  const [dateOfBirthFormMessage, setDateOfBirthFormMessage] = useState("");
   const [verifyStatus, setVerifyStatus] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
   const dateFormatList = "DD/MM/YYYY";
   let navigate = useNavigate();
 
+  const updateFirstName = (input: string) => {
+    setFirstName(input);
+    setFirstNameFormStatus("");
+    setFirstNameFormMessage("");
+  };
+
+  const updateLastName = (input: string) => {
+    setLastName(input);
+    setLastNameFormStatus("");
+    setLastNameFormMessage("");
+  };
+
+  const updateUserName = (input: string) => {
+    setUserName(input);
+    setUserNameFormStatus("");
+    setUserNameFormMessage("");
+  };
+
+  const updateEmail = (input: string) => {
+    setEmail(input);
+    setEmailFormStatus("");
+    setEmailFormMessage("");
+  };
+
+  const updatePhoneNumber = (input: string) => {
+    setPhoneNumber(input);
+    setPhoneNumberFormStatus("");
+    setPhoneNumberFormMessage("");
+  };
+
+  const updateHomeCity = (input: string) => {
+    setHomeCity(input);
+    setHomeCityFormStatus("");
+    setHomeCityFormMessage("");
+  };
+
+  const updateDateOfBirth = (input: any) => {
+    setDateOfBirth(input);
+    setDateOfBirthFormStatus("");
+    setDateOfBirthFormMessage("");
+  };
+
+  const validateForm = () => {
+    let validationStatus = true;
+    if (firstName === "") {
+      validationStatus = false;
+      setFirstNameFormStatus("error");
+      setFirstNameFormMessage("Enter your first name");
+    }
+    if (lastName === "") {
+      validationStatus = false;
+      setLastNameFormStatus("error");
+      setLastNameFormMessage("Enter your last name");
+    }
+    if (userName === "") {
+      validationStatus = false;
+      setUserNameFormStatus("error");
+      setUserNameFormMessage("Pick a username");
+    }
+    if (email === "") {
+      validationStatus = false;
+      setEmailFormStatus("error");
+      setEmailFormMessage("Enter your email");
+    }
+    if (phoneNumber === "") {
+      validationStatus = false;
+      setPhoneNumberFormStatus("error");
+      setPhoneNumberFormMessage("Enter your phone number");
+    }
+    if (dateOfBirth._d === null || dateOfBirth._d === undefined) {
+      validationStatus = false;
+      setDateOfBirthFormStatus("error");
+      setDateOfBirthFormMessage("Select your date of birth");
+    }
+    if (homeCity === "") {
+      validationStatus = false;
+      setHomeCityFormStatus("error");
+      setHomeCityFormMessage("Select your home city");
+    }
+    return validationStatus;
+  };
+
   const signUp = async () => {
     const payload = {
       firstName: firstName,
-      lastName: lasttName,
+      lastName: lastName,
       userName: userName,
       email: email,
       phoneNumber: phoneNumber,
@@ -38,8 +134,15 @@ const SignUpPage = (props: SignUpPageInterface) => {
       const resPostUser = await postUser(payload);
       const resPostLogin = await postLogin(payload);
       setVerifyStatus(true);
-    } catch (e) {
+    } catch (e: any) {
       console.error("signUp error", e);
+      if (e.response.data.field === "userName") {
+        setUserNameFormStatus("error");
+        setUserNameFormMessage(e.response.data.errorMessage);
+      } else if (e.response.data.field === "phoneNumber") {
+        setPhoneNumberFormStatus("error");
+        setPhoneNumberFormMessage(e.response.data.errorMessage);
+      }
     }
   };
 
@@ -96,35 +199,35 @@ const SignUpPage = (props: SignUpPageInterface) => {
             />
           ) : (
             <Form>
-              <Form.Item label="First Name">
-                <Input placeholder="First Name" onChange={(e) => setFirstName(e.target.value)} />
+              <Form.Item label="First Name" validateStatus={firstNameFormStatus} help={firstNameFormMessage}>
+                <Input placeholder="First Name" onChange={(e) => updateFirstName(e.target.value)} />
               </Form.Item>
-              <Form.Item label="Last Name">
-                <Input placeholder="Last Name" onChange={(e) => setLastName(e.target.value)} />
+              <Form.Item label="Last Name" validateStatus={lastNameFormStatus} help={lastNameFormMessage}>
+                <Input placeholder="Last Name" onChange={(e) => updateLastName(e.target.value)} />
               </Form.Item>
-              <Form.Item label="Username">
-                <Input placeholder="Username" onChange={(e) => setUserName(e.target.value)} />
+              <Form.Item label="Username" validateStatus={userNameFormStatus} help={userNameFormMessage}>
+                <Input placeholder="Username" onChange={(e) => updateUserName(e.target.value)} />
               </Form.Item>
-              <Form.Item label="Email Address">
-                <Input placeholder="Email Address" onChange={(e) => setEmail(e.target.value)} />
+              <Form.Item label="Email Address" validateStatus={emailFormStatus} help={emailFormMessage}>
+                <Input placeholder="Email Address" onChange={(e) => updateEmail(e.target.value)} />
               </Form.Item>
-              <Form.Item label="Phone Number">
-                <Input placeholder="Phone Number" onChange={(e) => setPhoneNumber(e.target.value)} />
+              <Form.Item label="Phone Number" validateStatus={phoneNumberFormStatus} help={phoneNumberFormMessage}>
+                <Input placeholder="Phone Number" onChange={(e) => updatePhoneNumber(e.target.value)} />
               </Form.Item>
-              <Form.Item label="Date of Birth">
+              <Form.Item label="Date of Birth" validateStatus={dateOfBirthFormStatus} help={dateOfBirthFormMessage}>
                 <DatePicker
                   placeholder="Select date of birth"
                   format={dateFormatList}
-                  onChange={(value) => setDateOfBirth(value)}
+                  onChange={(value) => updateDateOfBirth(value)}
                   style={{ width: "100%" }}
                 />
               </Form.Item>
-              <Form.Item label="Home City">
+              <Form.Item label="Home City" validateStatus={homeCityFormStatus} help={homeCityFormMessage}>
                 <Select
                   showSearch
                   placeholder="Select your home city"
                   optionFilterProp="children"
-                  onChange={(city) => setHomeCity(city)}
+                  onChange={(city) => updateHomeCity(city)}
                   filterOption={(input, option) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase())}
                   options={[
                     {
@@ -146,7 +249,7 @@ const SignUpPage = (props: SignUpPageInterface) => {
                 <Button
                   type="primary"
                   onClick={() => {
-                    signUp();
+                    validateForm() && signUp();
                   }}
                   style={{ width: "100%", backgroundColor: "#FFFFFF", border: 0, color: "#620CA5", fontWeight: "bold" }}
                 >

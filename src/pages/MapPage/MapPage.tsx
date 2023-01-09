@@ -96,7 +96,7 @@ const MapPage = () => {
       <Sidebar collapsed={sidebarCollapsed} toggleSidebarView={toggleSidebarView} />
       <Content>
         <Header toggleSidebarView={toggleSidebarView} />
-        {places.length > 0 ? (
+        {places.length >= 0 ? (
           <>
             <GoogleMap
               mapContainerStyle={{ width: "100vw", height: "93vh" }}

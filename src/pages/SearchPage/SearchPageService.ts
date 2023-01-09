@@ -13,6 +13,6 @@ export const getPlaceDetails = async (placeID: string) => {
 };
 
 export const postLocation = async (payload: any) => {
-  const res = await axios.post(`${api}/mappy/api/location`, payload);
+  const res = await axios.post(`${api}/mappy/api/locations`, payload);
   return res;
 };

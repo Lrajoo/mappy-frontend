@@ -117,7 +117,7 @@ const ListPage = () => {
       <Sidebar collapsed={sidebarCollapsed} toggleSidebarView={toggleSidebarView} />
       <Content>
         <Header toggleSidebarView={toggleSidebarView} />
-        {places.length > 0 ? (
+        {places.length >= 0 ? (
           <>
             <Row style={{ marginTop: "10px", marginBottom: "10px" }}>
               <Col span={12}>
