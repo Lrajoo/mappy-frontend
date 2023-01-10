@@ -23,11 +23,10 @@ const MapPage = () => {
   const { loginStatus, userId, firstName, lastName, userName, homeCity, homeState } = useContext(AuthContext);
 
   useEffect(() => {
-    populateMap();
-  }, []);
+    if (userId) populateMap();
+  }, [userId]);
 
   const toggleSidebarView = (collapsed: boolean) => {
-    test();
     setSidebarCollapsed(collapsed);
   };
 
@@ -48,7 +47,7 @@ const MapPage = () => {
   };
 
   const populateMap = async () => {
-    const res = await getLocations();
+    const res = await getLocations(homeCity, userId);
     let loadedPlaces: any = [];
     let loadedPlaceIds: any = [];
     await res.data.map(async (place: any) => {
@@ -68,10 +67,6 @@ const MapPage = () => {
     setOpen(false);
   };
 
-  const test = () => {
-    console.log(loginStatus, userId, firstName, lastName, userName, homeCity, homeState);
-  };
-
   const removeLocation = async () => {
     setLoading(true);
     try {
@@ -85,9 +80,15 @@ const MapPage = () => {
     }
   };
 
-  const center = {
-    lat: 40.7309,
-    lng: -73.9973,
+  const center: any = {
+    "New York City": {
+      lat: 40.7128,
+      lng: -74.006,
+    },
+    "San Francisco": {
+      lat: 37.7749,
+      lng: -122.4194,
+    },
   };
 
   const currentLocation = {
@@ -105,7 +106,7 @@ const MapPage = () => {
           <>
             <GoogleMap
               mapContainerStyle={{ width: "100vw", height: "93vh" }}
-              center={center}
+              center={center[homeCity]}
               zoom={13}
               options={{
                 fullscreenControl: false,
@@ -132,7 +133,15 @@ const MapPage = () => {
             </GoogleMap>
             <Button
               type="primary"
-              style={{ position: "absolute", bottom: "4vh", right: "2vh" }}
+              style={{
+                position: "absolute",
+                bottom: "4vh",
+                right: "2vh",
+                fontWeight: "bold",
+                backgroundColor: "#620CA5",
+                color: "#FFFFFF",
+                border: "0px",
+              }}
               onClick={() =>
                 navigate("/search", {
                   state: {

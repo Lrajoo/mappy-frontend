@@ -21,11 +21,11 @@ const ListPage = () => {
   let navigate = useNavigate();
 
   useEffect(() => {
-    populateList();
-  }, []);
+    if (userId) populateList();
+  }, [userId]);
 
   const populateList = async () => {
-    const res = await getLocations();
+    const res = await getLocations(homeCity, userId);
     let loadedPlaces: any = [];
     let loadedPlaceIds: any = [];
     await res.data.map(async (place: any) => {
@@ -127,7 +127,12 @@ const ListPage = () => {
               </Col>
               <Col span={12}>
                 <Row justify="end" style={{ marginRight: "20px" }}>
-                  <Button type="primary">Filter</Button>
+                  <Button
+                    type="primary"
+                    style={{ fontWeight: "bold", backgroundColor: "#620CA5", color: "#FFFFFF", border: "0px" }}
+                  >
+                    Filter
+                  </Button>
                 </Row>
               </Col>
             </Row>
@@ -145,7 +150,15 @@ const ListPage = () => {
             />
             <Button
               type="primary"
-              style={{ position: "fixed", bottom: "4vh", right: "2vh" }}
+              style={{
+                position: "fixed",
+                bottom: "4vh",
+                right: "2vh",
+                fontWeight: "bold",
+                backgroundColor: "#620CA5",
+                color: "#FFFFFF",
+                border: "0px",
+              }}
               onClick={() => {
                 navigate("/search", {
                   state: {

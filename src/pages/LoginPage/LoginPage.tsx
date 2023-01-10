@@ -49,7 +49,6 @@ const LoginPage = (props: LoginPageInterface) => {
   };
 
   const verify = async () => {
-    console.log("verify");
     const payload = {
       phoneNumber: phoneNumber,
       verificationCode: verificationCode,

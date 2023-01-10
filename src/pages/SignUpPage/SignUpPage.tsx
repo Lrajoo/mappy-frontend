@@ -253,10 +253,6 @@ const SignUpPage = (props: SignUpPageInterface) => {
                     filterOption={(input, option) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase())}
                     options={[
                       {
-                        value: "Boston,Massachusetts",
-                        label: "Boston, MA",
-                      },
-                      {
                         value: "San Francisco,California",
                         label: "San Francisco, CA",
                       },
@@ -311,7 +307,11 @@ const SignUpPage = (props: SignUpPageInterface) => {
               </Button>
             </>
           )}
-          <Button type="link" style={{ color: "#FFFFFF", marginBottom: "30px" }} onClick={() => login()}>
+          <Button
+            type="link"
+            style={{ color: "#FFFFFF", marginBottom: "30px", fontWeight: "bold" }}
+            onClick={() => login()}
+          >
             Back to Login Page
           </Button>
         </Row>

@@ -30,7 +30,7 @@ const SearchPage = () => {
   const searchPlaces = async (searchString: string) => {
     if (searchString === "") return;
     setSearchLoading(true);
-    const searchQuery = searchString.replace(" ", "+") + "+New+York+City";
+    const searchQuery = `${searchString.replaceAll(" ", "+")}+${homeCity.replaceAll(" ", "+")}`;
     try {
       const res = await getSearchResults(searchQuery);
       setResults(res.data);
@@ -59,7 +59,8 @@ const SearchPage = () => {
   const addLocation = async () => {
     setLoading(true);
     const payload = {
-      userId: "f2cada03-140f-41ad-84eb-1ee7560ad516",
+      city: homeCity,
+      userId: userId,
       placeId: locationDetails.placeId,
       mustHave: "",
       notes: "",
@@ -80,14 +81,17 @@ const SearchPage = () => {
       <Sidebar collapsed={sidebarCollapsed} toggleSidebarView={toggleSidebarView} />
       <Content>
         <Header toggleSidebarView={toggleSidebarView} />
-        <Row>
+        <Row style={{ height: "93vh" }}>
           <Col span={24}>
-            <Row justify="space-evenly" style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "20px" }}>
+            <Row
+              justify="space-evenly"
+              style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "20px", marginTop: "20px" }}
+            >
               Search
             </Row>
             <Row justify="space-evenly">
               <Search
-                placeholder="Locations in New York"
+                placeholder={`Locations in ${homeCity}`}
                 allowClear
                 enterButton="Search"
                 size="large"
@@ -95,10 +99,13 @@ const SearchPage = () => {
                 onSearch={(value: string) => {
                   searchPlaces(value);
                 }}
-                style={{ width: "80vw", marginBottom: "20px" }}
+                style={{
+                  width: "90%",
+                  marginBottom: "20px",
+                }}
               />
             </Row>
-            <Row justify="space-evenly" style={{ fontSize: "16px", marginBottom: "20px" }}>
+            <Row justify="space-evenly" style={{ fontSize: "16px", marginBottom: "20px", fontWeight: "bold" }}>
               Results
             </Row>
             {results.map((result: any) => {
