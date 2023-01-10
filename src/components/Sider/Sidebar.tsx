@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { Col, Row, Layout, Button } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
+import { AuthContext } from "../../components/AuthContext/AuthContext";
 const { Sider } = Layout;
 
 export interface SidebarProps {
@@ -12,9 +13,10 @@ export interface SidebarProps {
 const Sidebar = (props: SidebarProps) => {
   let navigate = useNavigate();
   const [page, setPage] = useState("");
+  const { loginStatus, userId, firstName, lastName, userName, homeCity, homeState } = useContext(AuthContext);
 
   useEffect(() => {
-    const page = window.location.pathname.replace("/", "");
+    const page = window.location.pathname.split("/")[1];
     setPage(page);
   });
 
@@ -31,6 +33,16 @@ const Sidebar = (props: SidebarProps) => {
   const navigateToSearch = () => {
     setPage("search");
     navigate("/search");
+  };
+
+  const navigateToProfile = () => {
+    setPage("profile");
+    navigate(`/profile/${userName}`);
+  };
+
+  const navigateToFriends = () => {
+    setPage("friends");
+    navigate(`/friends`);
   };
 
   const logout = () => {
@@ -67,6 +79,19 @@ const Sidebar = (props: SidebarProps) => {
           </Row>
           <Row style={{ marginBottom: "10px" }} justify="space-around">
             <Button
+              style={{
+                color: "#FFFFFF",
+                fontWeight: "bold",
+                borderBottom: page === "profile" ? "1px solid white" : "",
+              }}
+              type="link"
+              onClick={() => navigateToProfile()}
+            >
+              Profile
+            </Button>
+          </Row>
+          <Row style={{ marginBottom: "10px" }} justify="space-around">
+            <Button
               style={{ color: "#FFFFFF", fontWeight: "bold", borderBottom: page === "" ? "1px solid white" : "" }}
               type="link"
               onClick={() => navigateToMap()}
@@ -90,6 +115,19 @@ const Sidebar = (props: SidebarProps) => {
               onClick={() => navigateToSearch()}
             >
               Search
+            </Button>
+          </Row>
+          <Row style={{ marginBottom: "10px" }} justify="space-around">
+            <Button
+              style={{
+                color: "#FFFFFF",
+                fontWeight: "bold",
+                borderBottom: page === "friends" ? "1px solid white" : "",
+              }}
+              type="link"
+              onClick={() => navigateToFriends()}
+            >
+              Friends
             </Button>
           </Row>
         </Col>

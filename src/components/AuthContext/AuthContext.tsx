@@ -6,6 +6,8 @@ interface AuthContextInterface {
   firstName: string;
   lastName: string;
   userName: string;
+  phoneNumber: string;
+  email: string;
   homeCity: string;
   homeState: string;
 }
@@ -16,6 +18,8 @@ export const AuthContext = createContext({
   firstName: "",
   lastName: "",
   userName: "",
+  phoneNumber: "",
+  email: "",
   homeCity: "",
   homeState: "",
 });

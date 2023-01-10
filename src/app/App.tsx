@@ -5,6 +5,8 @@ import SignUpPage from "../pages/SignUpPage/SignUpPage";
 import MapPage from "../pages/MapPage/MapPage";
 import ListPage from "../pages/ListPage/ListPage";
 import SearchPage from "../pages/SearchPage/SearchPage";
+import ProfilePage from "../pages/ProfilePage/ProfilePage";
+// import FriendsPage from "../pages/FriendsPage/FriendsPage";
 import PrivateRoute from "../components/PrivateRoute/PrivateRoute";
 import { AuthContext } from "../components/AuthContext/AuthContext";
 import "./App.css";
@@ -17,6 +19,8 @@ function App() {
     firstName: "",
     lastName: "",
     userName: "",
+    phoneNumber: "",
+    email: "",
     homeCity: "",
     homeState: "",
   });
@@ -41,6 +45,8 @@ function App() {
           firstName: userData.firstName,
           lastName: userData.lastName,
           userName: userData.userName,
+          phoneNumber: userData.phoneNumber,
+          email: userData.email,
           homeCity: userData.homeCity,
           homeState: userData.homeState,
         }}
@@ -52,6 +58,8 @@ function App() {
             <Route path="/" element={<MapPage />} />
             <Route path="/list" element={<ListPage />} />
             <Route path="/search" element={<SearchPage />} />
+            <Route path="/profile/:userName" element={<ProfilePage />} />
+            {/* <Route path="/friends" element={<FriendsPage />} /> */}
           </Route>
         </Routes>
       </AuthContext.Provider>
