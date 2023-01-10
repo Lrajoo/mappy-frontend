@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Col, Row, Layout, Input, message } from "antd";
+import { Col, Row, Layout } from "antd";
 import { getProfile } from "./ProfilePageService";
 import Header from "../../components/Header/Header";
 import Sidebar from "../../components/Sider/Sidebar";
@@ -8,7 +8,6 @@ import { UserOutlined } from "@ant-design/icons";
 import "./ProfilePage.css";
 
 const { Content } = Layout;
-const { Search } = Input;
 
 const ProfilePage = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);

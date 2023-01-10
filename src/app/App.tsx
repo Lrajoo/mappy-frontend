@@ -6,7 +6,7 @@ import MapPage from "../pages/MapPage/MapPage";
 import ListPage from "../pages/ListPage/ListPage";
 import SearchPage from "../pages/SearchPage/SearchPage";
 import ProfilePage from "../pages/ProfilePage/ProfilePage";
-// import FriendsPage from "../pages/FriendsPage/FriendsPage";
+import FriendsPage from "../pages/FriendsPage/FriendsPage";
 import PrivateRoute from "../components/PrivateRoute/PrivateRoute";
 import { AuthContext } from "../components/AuthContext/AuthContext";
 import "./App.css";
@@ -59,7 +59,7 @@ function App() {
             <Route path="/list" element={<ListPage />} />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/profile/:userName" element={<ProfilePage />} />
-            {/* <Route path="/friends" element={<FriendsPage />} /> */}
+            <Route path="/friends" element={<FriendsPage />} />
           </Route>
         </Routes>
       </AuthContext.Provider>
