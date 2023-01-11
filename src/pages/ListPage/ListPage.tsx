@@ -69,7 +69,7 @@ const ListPage = () => {
       populateList();
       setLoading(false);
       setOpen(false);
-      setTimeout(() => message.error(`Removed ${locationDetails.name}!`), 1000);
+      setTimeout(() => message.error(`Removed ${locationDetails.name}!`), 500);
     } catch (e) {
       console.error("removeLocation error", e);
     }

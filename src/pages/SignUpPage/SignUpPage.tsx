@@ -138,7 +138,7 @@ const SignUpPage = (props: SignUpPageInterface) => {
       const resPostUser = await postUser(payload);
       const resPostLogin = await postLogin(payload);
       setLoading(false);
-      setTimeout(() => message.success("Verification code sent!"), 1000);
+      setTimeout(() => message.success("Verification code sent!"), 500);
       setVerifyStatus(true);
     } catch (e: any) {
       console.error("signUp error", e);
@@ -164,7 +164,7 @@ const SignUpPage = (props: SignUpPageInterface) => {
       if (res.data.loginStatus) {
         props.authenticateUser(res.data);
         navigate("/");
-        setTimeout(() => message.success("Welcome to Mappy!"), 1000);
+        setTimeout(() => message.success("Welcome to Mappy!"), 500);
       }
     } catch (e) {
       setVerificationCodeFormStatus("error");

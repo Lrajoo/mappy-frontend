@@ -21,7 +21,7 @@ const LoginPage = (props: LoginPageInterface) => {
   const [phoneNumberFormStatus, setPhoneNumberFormStatus] = useState("") as any;
   const [phoneNumberFormMessage, setPhoneNumberFormMessage] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
-  const { loginStatus, userId, firstName, lastName, userName, homeCity, homeState } = useContext(AuthContext);
+  // const { loginStatus, userId, firstName, lastName, userName, homeCity, homeState } = useContext(AuthContext);
   let navigate = useNavigate();
 
   useEffect(() => {}, []);
@@ -40,7 +40,7 @@ const LoginPage = (props: LoginPageInterface) => {
       const res = await postLogin(payload);
       setLoading(false);
       setVerifyStatus(true);
-      setTimeout(() => message.success("Verification code sent!"), 1000);
+      setTimeout(() => message.success("Verification code sent!"), 500);
     } catch (e) {
       setPhoneNumberFormStatus("error");
       setPhoneNumberFormMessage("No account associated with this number");
@@ -60,7 +60,7 @@ const LoginPage = (props: LoginPageInterface) => {
       if (res.data.loginStatus) {
         props.authenticateUser(res.data);
         navigate("/");
-        setTimeout(() => message.success(`Welcome back ${userName}!`), 1000);
+        setTimeout(() => message.success(`Successfully logged in!`), 500);
       }
     } catch (e) {
       setVerificationCodeFormStatus("error");

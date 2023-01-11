@@ -70,7 +70,7 @@ const SearchPage = () => {
       setLoading(false);
       setDisableLocation(false);
       setOpen(false);
-      setTimeout(() => message.success(`Added ${locationDetails.name}!`), 1000);
+      setTimeout(() => message.success(`Added ${locationDetails.name}!`), 500);
     } catch (e) {
       console.error("addLocation error", e);
     }

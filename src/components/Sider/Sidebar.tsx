@@ -13,12 +13,12 @@ export interface SidebarProps {
 const Sidebar = (props: SidebarProps) => {
   let navigate = useNavigate();
   const [page, setPage] = useState("");
-  const { loginStatus, userId, firstName, lastName, userName, homeCity, homeState } = useContext(AuthContext);
+  const { userName } = useContext(AuthContext);
 
   useEffect(() => {
     const page = window.location.pathname.split("/")[1];
     setPage(page);
-  });
+  }, []);
 
   const navigateToMap = () => {
     setPage("map");
@@ -42,7 +42,7 @@ const Sidebar = (props: SidebarProps) => {
 
   const navigateToFriends = () => {
     setPage("friends");
-    navigate(`/friends`);
+    navigate(`/friends/${userName}`);
   };
 
   const logout = () => {

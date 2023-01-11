@@ -59,7 +59,7 @@ function App() {
             <Route path="/list" element={<ListPage />} />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/profile/:userName" element={<ProfilePage />} />
-            <Route path="/friends" element={<FriendsPage />} />
+            <Route path="/friends/:userName" element={<FriendsPage />} />
           </Route>
         </Routes>
       </AuthContext.Provider>
